@@ -8,660 +8,183 @@
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg0: #060608;
-    --bg1: #0d0d10;
-    --bg2: #111116;
-    --bg3: #16161c;
-    --bg4: #1c1c24;
-    --red: #e03030;
-    --red-dim: #7a1a1a;
-    --red-glow: rgba(224,48,48,0.15);
-    --amber: #e07020;
-    --amber-dim: #7a3a10;
-    --amber-glow: rgba(224,112,32,0.12);
-    --green: #20b050;
-    --green-dim: #0a5020;
-    --green-glow: rgba(32,176,80,0.1);
-    --blue: #2080e0;
-    --blue-dim: #0a2a6a;
-    --cyan: #20c0c0;
-    --white: #e8e8ec;
-    --gray: #606070;
-    --gray-lt: #909090;
-    --mono: 'Share Tech Mono', monospace;
-    --title: 'Orbitron', sans-serif;
-    --body: 'Rajdhani', sans-serif;
-    --border: 1px solid #2a2a32;
-    --border-red: 1px solid var(--red-dim);
-    --border-amber: 1px solid var(--amber-dim);
+    --bg0:#060608;--bg1:#0d0d10;--bg2:#111116;--bg3:#16161c;--bg4:#1c1c24;
+    --red:#e03030;--red-dim:#7a1a1a;--red-glow:rgba(224,48,48,0.15);
+    --amber:#e07020;--amber-dim:#7a3a10;--amber-glow:rgba(224,112,32,0.12);
+    --green:#20b050;--green-dim:#0a5020;--green-glow:rgba(32,176,80,0.1);
+    --blue:#2080e0;--blue-dim:#0a2a6a;--cyan:#20c0c0;
+    --white:#e8e8ec;--gray:#606070;--gray-lt:#909090;
+    --mono:'Share Tech Mono',monospace;--title:'Orbitron',sans-serif;--body:'Rajdhani',sans-serif;
+    --border:1px solid #2a2a32;--border-red:1px solid var(--red-dim);--border-amber:1px solid var(--amber-dim);
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body {
-    background: var(--bg0);
-    color: var(--white);
-    font-family: var(--body);
-    font-size: 14px;
-    line-height: 1.5;
-    overflow-x: hidden;
-  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg0);color:var(--white);font-family:var(--body);font-size:14px;line-height:1.5;overflow-x:hidden;}
+  body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.04) 3px,rgba(0,0,0,0.04) 4px);pointer-events:none;z-index:9999;}
 
-  /* ── SCANLINE OVERLAY ── */
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 3px,
-      rgba(0,0,0,0.04) 3px,
-      rgba(0,0,0,0.04) 4px
-    );
-    pointer-events: none;
-    z-index: 9999;
-  }
+  #topbar{position:sticky;top:0;z-index:100;background:var(--bg1);border-bottom:1px solid var(--red-dim);padding:0 20px;display:flex;align-items:center;gap:16px;height:52px;overflow:hidden;}
+  .logo-text{font-family:var(--title);font-size:13px;font-weight:700;color:var(--red);letter-spacing:2px;white-space:nowrap;flex-shrink:0;}
+  .topbar-divider{width:1px;height:28px;background:#2a2a32;flex-shrink:0;}
+  .threat-badge{font-family:var(--title);font-size:10px;font-weight:700;letter-spacing:2px;padding:4px 10px;border-radius:3px;flex-shrink:0;}
+  .threat-badge.critical{background:var(--red);color:#fff;animation:blink 2s step-start infinite;}
+  @keyframes blink{50%{opacity:0.6;}}
+  #ticker-wrap{flex:1;overflow:hidden;position:relative;}
+  #ticker-wrap::before{content:'';position:absolute;left:0;top:0;bottom:0;width:30px;background:linear-gradient(to right,var(--bg1),transparent);z-index:1;}
+  #ticker{display:flex;gap:0;animation:scroll-left 75s linear infinite;white-space:nowrap;}
+  @keyframes scroll-left{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+  .tick-item{font-family:var(--mono);font-size:11px;color:var(--amber);padding:0 32px;border-left:1px solid var(--amber-dim);}
+  .tick-item.alert{color:var(--red);}
+  #clock{font-family:var(--mono);font-size:12px;color:var(--cyan);flex-shrink:0;letter-spacing:1px;}
 
-  /* ── TOP BAR ── */
-  #topbar {
-    position: sticky; top: 0; z-index: 100;
-    background: var(--bg1);
-    border-bottom: 1px solid var(--red-dim);
-    padding: 0 20px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    height: 52px;
-    overflow: hidden;
-  }
-  .logo-text {
-    font-family: var(--title);
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--red);
-    letter-spacing: 2px;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .topbar-divider { width: 1px; height: 28px; background: #2a2a32; flex-shrink: 0; }
-  .threat-badge {
-    font-family: var(--title);
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    padding: 4px 10px;
-    border-radius: 3px;
-    flex-shrink: 0;
-  }
-  .threat-badge.critical { background: var(--red); color: #fff; animation: blink 2s step-start infinite; }
-  @keyframes blink { 50% { opacity: 0.6; } }
+  #header{background:var(--bg1);border-bottom:var(--border);padding:28px 24px 20px;text-align:center;position:relative;}
+  #header::before,#header::after{content:'';position:absolute;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,var(--red),transparent);}
+  #header::before{left:0;}#header::after{right:0;}
+  .op-name{font-family:var(--title);font-size:10px;color:var(--amber);letter-spacing:4px;margin-bottom:6px;}
+  .main-title{font-family:var(--title);font-size:clamp(18px,4vw,32px);font-weight:900;color:var(--white);letter-spacing:3px;line-height:1.1;}
+  .main-title span{color:var(--red);}
+  .sub-title{font-family:var(--mono);font-size:11px;color:var(--gray-lt);margin-top:8px;letter-spacing:2px;}
+  .day-counter{display:inline-block;margin-top:14px;font-family:var(--title);font-size:11px;letter-spacing:3px;color:var(--red);border:1px solid var(--red-dim);padding:4px 16px;background:var(--red-glow);}
+  .day-counter span{font-size:28px;font-weight:900;color:var(--red);}
 
-  #ticker-wrap { flex: 1; overflow: hidden; position: relative; }
-  #ticker-wrap::before {
-    content: '';
-    position: absolute; left: 0; top: 0; bottom: 0; width: 30px;
-    background: linear-gradient(to right, var(--bg1), transparent);
-    z-index: 1;
-  }
-  #ticker {
-    display: flex;
-    gap: 0;
-    animation: scroll-left 60s linear infinite;
-    white-space: nowrap;
-  }
-  @keyframes scroll-left {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
-  .tick-item {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--amber);
-    padding: 0 32px;
-    border-left: 1px solid var(--amber-dim);
-  }
-  .tick-item.alert { color: var(--red); }
-  .tick-item.ok { color: var(--green); }
+  .grid-outer{display:grid;grid-template-columns:270px 1fr 270px;gap:0;min-height:calc(100vh - 130px);}
+  .sidebar{background:var(--bg1);border-right:var(--border);}
+  .sidebar-right{border-right:none;border-left:var(--border);}
+  .main-area{background:var(--bg0);}
 
-  #clock {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--cyan);
-    flex-shrink: 0;
-    letter-spacing: 1px;
-  }
+  .panel{border-bottom:var(--border);padding:14px 16px;}
+  .panel-title{font-family:var(--title);font-size:9px;letter-spacing:3px;color:var(--gray);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+  .panel-title::after{content:'';flex:1;height:1px;background:#2a2a32;}
+  .panel-title.red{color:var(--red);}.panel-title.amber{color:var(--amber);}.panel-title.green{color:var(--green);}.panel-title.cyan{color:var(--cyan);}
 
-  /* ── HEADER ── */
-  #header {
-    background: var(--bg1);
-    border-bottom: var(--border);
-    padding: 28px 24px 20px;
-    text-align: center;
-    position: relative;
-  }
-  #header::before, #header::after {
-    content: '';
-    position: absolute;
-    top: 0; bottom: 0;
-    width: 3px;
-    background: linear-gradient(to bottom, var(--red), transparent);
-  }
-  #header::before { left: 0; }
-  #header::after { right: 0; }
+  .cas-grid{display:grid;gap:10px;}
+  .cas-card{background:var(--bg2);border:var(--border);padding:10px 12px;border-radius:3px;position:relative;overflow:hidden;}
+  .cas-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;}
+  .cas-card.iran::before{background:var(--red);}
+  .cas-card.israel::before{background:#3399ff;}
+  .cas-card.us::before{background:#44aaee;}
+  .cas-card.leb::before{background:var(--green);}
+  .cas-card.gulf::before{background:var(--amber);}
+  .cas-card.iraq::before{background:#9966ff;}
+  .cas-label{font-family:var(--title);font-size:8px;letter-spacing:2px;color:var(--gray-lt);margin-bottom:4px;}
+  .cas-flag{font-size:16px;position:absolute;right:10px;top:10px;opacity:0.5;}
+  .cas-dead{font-family:var(--title);font-size:22px;font-weight:700;line-height:1;margin-bottom:2px;}
+  .cas-card.iran .cas-dead{color:var(--red);}
+  .cas-card.israel .cas-dead{color:#5aabff;}
+  .cas-card.us .cas-dead{color:#66ccff;}
+  .cas-card.leb .cas-dead{color:var(--green);}
+  .cas-card.gulf .cas-dead{color:var(--amber);}
+  .cas-card.iraq .cas-dead{color:#9966ff;}
+  .cas-injured{font-family:var(--mono);font-size:10px;color:var(--gray-lt);}
+  .cas-injured span{color:var(--amber);}
+  .cas-src{font-size:10px;color:var(--gray);margin-top:3px;font-family:var(--mono);}
 
-  .op-name {
-    font-family: var(--title);
-    font-size: 10px;
-    color: var(--amber);
-    letter-spacing: 4px;
-    margin-bottom: 6px;
-  }
-  .main-title {
-    font-family: var(--title);
-    font-size: clamp(18px, 4vw, 32px);
-    font-weight: 900;
-    color: var(--white);
-    letter-spacing: 3px;
-    line-height: 1.1;
-  }
-  .main-title span { color: var(--red); }
-  .sub-title {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--gray-lt);
-    margin-top: 8px;
-    letter-spacing: 2px;
-  }
-  .day-counter {
-    display: inline-block;
-    margin-top: 14px;
-    font-family: var(--title);
-    font-size: 11px;
-    letter-spacing: 3px;
-    color: var(--red);
-    border: 1px solid var(--red-dim);
-    padding: 4px 16px;
-    background: var(--red-glow);
-  }
-  .day-counter span {
-    font-size: 28px;
-    font-weight: 900;
-    color: var(--red);
-  }
+  .stat-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #1a1a20;}
+  .stat-row:last-child{border-bottom:none;}
+  .stat-label{font-family:var(--body);font-size:12px;color:var(--gray-lt);}
+  .stat-val{font-family:var(--mono);font-size:12px;color:var(--amber);}
+  .stat-val.red{color:var(--red);}.stat-val.green{color:var(--green);}.stat-val.cyan{color:var(--cyan);}.stat-val.white{color:var(--white);}
 
-  /* ── GRID LAYOUT ── */
-  .grid-outer {
-    display: grid;
-    grid-template-columns: 260px 1fr 260px;
-    gap: 0;
-    min-height: calc(100vh - 130px);
-  }
+  .threat-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #1a1a20;}
+  .threat-row:last-child{border-bottom:none;}
+  .threat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .threat-name{font-size:12px;color:var(--white);}
+  .threat-lvl{font-family:var(--title);font-size:8px;letter-spacing:1px;padding:2px 6px;border-radius:2px;}
+  .threat-lvl.critical{background:var(--red);color:#fff;}
+  .threat-lvl.high{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-dim);}
+  .threat-lvl.elevated{background:#2a2a10;color:#aaaa30;border:1px solid #404010;}
+  .threat-lvl.moderate{background:#0a2a0a;color:var(--green);border:1px solid var(--green-dim);}
 
-  /* ── SIDEBAR LEFT ── */
-  .sidebar { background: var(--bg1); border-right: var(--border); }
-  .sidebar-right { border-right: none; border-left: var(--border); }
+  #map-container{background:var(--bg1);border-bottom:var(--border);padding:16px;}
+  .map-title{font-family:var(--title);font-size:9px;letter-spacing:3px;color:var(--gray);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+  .map-title::after{content:'';flex:1;height:1px;background:#2a2a32;}
+  .map-legend{display:flex;gap:16px;margin-top:10px;flex-wrap:wrap;}
+  .legend-item{display:flex;align-items:center;gap:6px;font-family:var(--body);font-size:11px;color:var(--gray-lt);}
+  .legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 
-  /* ── MAIN AREA ── */
-  .main-area { background: var(--bg0); }
+  .tl-item{display:grid;grid-template-columns:75px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid #1a1a20;}
+  .tl-item:last-child{border-bottom:none;}
+  .tl-date{font-family:var(--mono);font-size:10px;color:var(--gray);padding-top:2px;}
+  .tl-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--red);margin-right:5px;position:relative;top:-1px;flex-shrink:0;}
+  .tl-dot.amber{background:var(--amber);}.tl-dot.green{background:var(--green);}.tl-dot.blue{background:var(--blue);}
+  .tl-text{font-size:12px;color:var(--white);line-height:1.5;}
+  .tag{font-family:var(--title);font-size:8px;letter-spacing:1px;padding:1px 5px;border-radius:2px;margin-right:5px;vertical-align:middle;}
+  .tag.us{background:#0a2040;color:#5aabff;}.tag.iran{background:#2a0a0a;color:var(--red);}
+  .tag.isr{background:#0a1a30;color:#7ab0ff;}.tag.hiz{background:#1a1a00;color:#aaaa20;}
+  .tag.econ{background:#1a0a20;color:#aa60ff;}.tag.leb{background:#0a1a0a;color:var(--green);}
 
-  /* ── PANEL GENERIC ── */
-  .panel {
-    border-bottom: var(--border);
-    padding: 14px 16px;
-  }
-  .panel-title {
-    font-family: var(--title);
-    font-size: 9px;
-    letter-spacing: 3px;
-    color: var(--gray);
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .panel-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: #2a2a32;
-  }
-  .panel-title.red { color: var(--red); }
-  .panel-title.amber { color: var(--amber); }
-  .panel-title.green { color: var(--green); }
-  .panel-title.cyan { color: var(--cyan); }
+  .news-card{background:var(--bg2);border:var(--border);border-radius:3px;padding:10px 12px;margin-bottom:10px;}
+  .news-card:last-child{margin-bottom:0;}
+  .news-source{font-family:var(--title);font-size:8px;letter-spacing:2px;color:var(--gray);margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;}
+  .news-source .age{color:var(--cyan);font-size:9px;font-family:var(--mono);}
+  .news-head{font-size:12px;color:var(--white);font-weight:600;line-height:1.4;margin-bottom:4px;}
+  .news-body{font-size:11px;color:var(--gray-lt);line-height:1.5;}
 
-  /* ── CASUALTY CARDS ── */
-  .cas-grid {
-    display: grid;
-    gap: 10px;
-  }
-  .cas-card {
-    background: var(--bg2);
-    border: var(--border);
-    padding: 10px 12px;
-    border-radius: 3px;
-    position: relative;
-    overflow: hidden;
-  }
-  .cas-card::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 3px;
-  }
-  .cas-card.iran::before { background: var(--red); }
-  .cas-card.israel::before { background: #3399ff; }
-  .cas-card.us::before { background: #44aaee; }
-  .cas-card.leb::before { background: var(--green); }
-  .cas-card.gulf::before { background: var(--amber); }
+  .actor-card{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #1a1a20;}
+  .actor-card:last-child{border-bottom:none;}
+  .actor-flag{font-size:20px;line-height:1;flex-shrink:0;}
+  .actor-name{font-weight:600;font-size:13px;color:var(--white);}
+  .actor-role{font-size:10px;color:var(--gray);margin-bottom:2px;}
+  .actor-note{font-size:11px;color:var(--gray-lt);}
 
-  .cas-label {
-    font-family: var(--title);
-    font-size: 8px;
-    letter-spacing: 2px;
-    color: var(--gray-lt);
-    margin-bottom: 4px;
-  }
-  .cas-flag {
-    font-size: 16px;
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    opacity: 0.5;
-  }
-  .cas-dead {
-    font-family: var(--title);
-    font-size: 22px;
-    font-weight: 700;
-    line-height: 1;
-    margin-bottom: 2px;
-  }
-  .cas-card.iran .cas-dead { color: var(--red); }
-  .cas-card.israel .cas-dead { color: #5aabff; }
-  .cas-card.us .cas-dead { color: #66ccff; }
-  .cas-card.leb .cas-dead { color: var(--green); }
-  .cas-card.gulf .cas-dead { color: var(--amber); }
+  .econ-row{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid #1a1a20;}
+  .econ-row:last-child{border-bottom:none;}
+  .econ-name{font-size:12px;color:var(--gray-lt);}
+  .econ-val{font-family:var(--mono);font-size:12px;color:var(--white);text-align:right;}
+  .econ-chg{font-family:var(--mono);font-size:11px;text-align:right;min-width:52px;}
+  .econ-chg.up{color:var(--red);}.econ-chg.dn{color:var(--green);}
 
-  .cas-injured {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--gray-lt);
-  }
-  .cas-injured span { color: var(--amber); }
+  .wpn-row{display:grid;grid-template-columns:1fr auto auto;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid #1a1a20;font-size:11px;}
+  .wpn-row:last-child{border-bottom:none;}
+  .wpn-name{color:var(--white);}
+  .wpn-cost{font-family:var(--mono);font-size:10px;color:var(--amber);text-align:right;}
+  .wpn-eff{font-family:var(--title);font-size:8px;letter-spacing:1px;padding:2px 5px;border-radius:2px;}
+  .wpn-eff.high{background:#0a2a0a;color:var(--green);}.wpn-eff.med{background:#2a2a00;color:#aaaa20;}.wpn-eff.dep{background:#0a1a30;color:#5aabff;}
 
-  /* ── STAT ROWS ── */
-  .stat-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 6px 0;
-    border-bottom: 1px solid #1a1a20;
-  }
-  .stat-row:last-child { border-bottom: none; }
-  .stat-label {
-    font-family: var(--body);
-    font-size: 12px;
-    color: var(--gray-lt);
-    font-weight: 400;
-  }
-  .stat-val {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--amber);
-    font-weight: 400;
-  }
-  .stat-val.red { color: var(--red); }
-  .stat-val.green { color: var(--green); }
-  .stat-val.cyan { color: var(--cyan); }
-  .stat-val.white { color: var(--white); }
+  .intel-item{font-family:var(--mono);font-size:10px;color:var(--gray-lt);padding:5px 0;border-bottom:1px solid #1a1a20;line-height:1.6;}
+  .intel-item:last-child{border-bottom:none;}
+  .intel-item .prefix{color:var(--cyan);}.intel-item .alert-prefix{color:var(--red);}
 
-  /* ── THREAT MATRIX ── */
-  .threat-row {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 0;
-    border-bottom: 1px solid #1a1a20;
-  }
-  .threat-row:last-child { border-bottom: none; }
-  .threat-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .threat-name { font-size: 12px; color: var(--white); }
-  .threat-lvl {
-    font-family: var(--title);
-    font-size: 8px;
-    letter-spacing: 1px;
-    padding: 2px 6px;
-    border-radius: 2px;
-  }
-  .threat-lvl.critical { background: var(--red); color: #fff; }
-  .threat-lvl.high { background: var(--amber-dim); color: var(--amber); border: 1px solid var(--amber-dim); }
-  .threat-lvl.elevated { background: #2a2a10; color: #aaaa30; border: 1px solid #404010; }
-  .threat-lvl.moderate { background: #0a2a0a; color: var(--green); border: 1px solid var(--green-dim); }
-  .threat-bar {
-    width: 100%;
-    height: 3px;
-    background: #1a1a20;
-    border-radius: 2px;
-    margin-top: 3px;
-    grid-column: 2 / 3;
-  }
-  .threat-fill {
-    height: 100%;
-    border-radius: 2px;
-    background: var(--red);
-  }
+  .status-row{display:grid;grid-template-columns:140px 1fr 40px;align-items:center;gap:8px;padding:5px 0;}
+  .status-label{font-size:11px;color:var(--gray-lt);}
+  .status-bar-bg{height:5px;background:#1a1a20;border-radius:3px;overflow:hidden;}
+  .status-bar-fill{height:100%;border-radius:3px;}
+  .status-pct{font-family:var(--mono);font-size:11px;text-align:right;}
 
-  /* ── MAP AREA ── */
-  #map-container {
-    background: var(--bg1);
-    border-bottom: var(--border);
-    padding: 16px;
-    position: relative;
-  }
-  .map-title {
-    font-family: var(--title);
-    font-size: 9px;
-    letter-spacing: 3px;
-    color: var(--gray);
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .map-title::after { content: ''; flex: 1; height: 1px; background: #2a2a32; }
-  .map-legend {
-    display: flex;
-    gap: 16px;
-    margin-top: 10px;
-    flex-wrap: wrap;
-  }
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-family: var(--body);
-    font-size: 11px;
-    color: var(--gray-lt);
-  }
-  .legend-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
+  .cond-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .cond-item{background:var(--bg2);border:var(--border);padding:8px 10px;border-radius:3px;text-align:center;}
+  .cond-ico{font-size:18px;margin-bottom:3px;}
+  .cond-label{font-family:var(--title);font-size:8px;letter-spacing:1px;color:var(--gray);margin-bottom:2px;}
+  .cond-val{font-family:var(--mono);font-size:12px;}
+  .cond-val.red{color:var(--red);}.cond-val.amber{color:var(--amber);}.cond-val.green{color:var(--green);}.cond-val.cyan{color:var(--cyan);}
 
-  /* ── TIMELINE ── */
-  .tl-item {
-    display: grid;
-    grid-template-columns: 70px 1fr;
-    gap: 10px;
-    padding: 8px 0;
-    border-bottom: 1px solid #1a1a20;
-  }
-  .tl-item:last-child { border-bottom: none; }
-  .tl-date {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--gray);
-    padding-top: 2px;
-    flex-shrink: 0;
-  }
-  .tl-dot {
-    display: inline-block;
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--red);
-    margin-right: 6px;
-    flex-shrink: 0;
-    position: relative;
-    top: -1px;
-  }
-  .tl-dot.amber { background: var(--amber); }
-  .tl-dot.green { background: var(--green); }
-  .tl-dot.blue { background: var(--blue); }
-  .tl-text {
-    font-size: 12px;
-    color: var(--white);
-    line-height: 1.5;
-  }
-  .tl-text .tag {
-    font-family: var(--title);
-    font-size: 8px;
-    letter-spacing: 1px;
-    padding: 1px 5px;
-    border-radius: 2px;
-    margin-right: 5px;
-    vertical-align: middle;
-  }
-  .tag.us { background: #0a2040; color: #5aabff; }
-  .tag.iran { background: #2a0a0a; color: var(--red); }
-  .tag.isr { background: #0a1a30; color: #7ab0ff; }
-  .tag.hiz { background: #1a1a00; color: #aaaa20; }
-  .tag.econ { background: #1a0a20; color: #aa60ff; }
+  .center-top{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:var(--border);}
+  .center-panel{padding:16px;border-right:var(--border);}
+  .center-panel:last-child{border-right:none;}
 
-  /* ── NEWS CARDS ── */
-  .news-card {
-    background: var(--bg2);
-    border: var(--border);
-    border-radius: 3px;
-    padding: 10px 12px;
-    margin-bottom: 10px;
-  }
-  .news-card:last-child { margin-bottom: 0; }
-  .news-source {
-    font-family: var(--title);
-    font-size: 8px;
-    letter-spacing: 2px;
-    color: var(--gray);
-    margin-bottom: 4px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .news-source .age { color: var(--cyan); font-size: 9px; font-family: var(--mono); }
-  .news-head {
-    font-size: 12px;
-    color: var(--white);
-    font-weight: 600;
-    line-height: 1.4;
-    margin-bottom: 4px;
-  }
-  .news-body { font-size: 11px; color: var(--gray-lt); line-height: 1.5; }
+  .bigstat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+  .bigstat-card{background:var(--bg2);border:var(--border);border-radius:3px;padding:12px;text-align:center;position:relative;overflow:hidden;}
+  .bigstat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--red);opacity:0.6;}
+  .bigstat-card.amber::after{background:var(--amber);}.bigstat-card.blue::after{background:var(--blue);}
+  .bigstat-card.green::after{background:var(--green);}.bigstat-card.cyan::after{background:var(--cyan);}.bigstat-card.purple::after{background:#9966ff;}
+  .bigstat-label{font-family:var(--title);font-size:7px;letter-spacing:2px;color:var(--gray);margin-bottom:4px;}
+  .bigstat-num{font-family:var(--title);font-size:clamp(16px,2.2vw,24px);font-weight:700;line-height:1;color:var(--red);}
+  .bigstat-card.amber .bigstat-num{color:var(--amber);}.bigstat-card.blue .bigstat-num{color:#5aabff;}
+  .bigstat-card.green .bigstat-num{color:var(--green);}.bigstat-card.cyan .bigstat-num{color:var(--cyan);}.bigstat-card.purple .bigstat-num{color:#9966ff;}
+  .bigstat-sub{font-family:var(--mono);font-size:9px;color:var(--gray);margin-top:3px;}
 
-  /* ── ACTOR CARDS ── */
-  .actor-card {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 8px 0;
-    border-bottom: 1px solid #1a1a20;
-  }
-  .actor-card:last-child { border-bottom: none; }
-  .actor-flag { font-size: 20px; line-height: 1; flex-shrink: 0; }
-  .actor-name { font-weight: 600; font-size: 13px; color: var(--white); }
-  .actor-role { font-size: 10px; color: var(--gray); margin-bottom: 2px; }
-  .actor-note { font-size: 11px; color: var(--gray-lt); }
+  @media(max-width:1100px){.grid-outer{grid-template-columns:220px 1fr;}.sidebar-right{display:none;}}
+  @media(max-width:768px){.grid-outer{grid-template-columns:1fr;}.sidebar{display:none;}.center-top{grid-template-columns:1fr;}}
 
-  /* ── ECON TABLE ── */
-  .econ-row {
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    gap: 8px;
-    align-items: center;
-    padding: 5px 0;
-    border-bottom: 1px solid #1a1a20;
-  }
-  .econ-row:last-child { border-bottom: none; }
-  .econ-name { font-size: 12px; color: var(--gray-lt); }
-  .econ-val { font-family: var(--mono); font-size: 12px; color: var(--white); text-align: right; }
-  .econ-chg { font-family: var(--mono); font-size: 11px; text-align: right; min-width: 52px; }
-  .econ-chg.up { color: var(--red); }
-  .econ-chg.dn { color: var(--green); }
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.5;}}
+  .pulse{animation:pulse 2s ease-in-out infinite;}
+  ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:var(--bg0);}::-webkit-scrollbar-thumb{background:#2a2a32;border-radius:2px;}
 
-  /* ── CYBER / INTEL FEED ── */
-  .intel-item {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--gray-lt);
-    padding: 5px 0;
-    border-bottom: 1px solid #1a1a20;
-    line-height: 1.6;
-  }
-  .intel-item:last-child { border-bottom: none; }
-  .intel-item .prefix { color: var(--cyan); }
-  .intel-item .alert-prefix { color: var(--red); }
-
-  /* ── STATUS BARS ── */
-  .status-row {
-    display: grid;
-    grid-template-columns: 120px 1fr 40px;
-    align-items: center;
-    gap: 8px;
-    padding: 5px 0;
-  }
-  .status-label { font-size: 11px; color: var(--gray-lt); }
-  .status-bar-bg { height: 5px; background: #1a1a20; border-radius: 3px; overflow: hidden; }
-  .status-bar-fill { height: 100%; border-radius: 3px; transition: width 1s; }
-  .status-pct { font-family: var(--mono); font-size: 11px; text-align: right; }
-
-  /* ── CONDITIONS GRID ── */
-  .cond-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .cond-item {
-    background: var(--bg2);
-    border: var(--border);
-    padding: 8px 10px;
-    border-radius: 3px;
-    text-align: center;
-  }
-  .cond-ico { font-size: 18px; margin-bottom: 3px; }
-  .cond-label { font-family: var(--title); font-size: 8px; letter-spacing: 1px; color: var(--gray); margin-bottom: 2px; }
-  .cond-val { font-family: var(--mono); font-size: 12px; }
-  .cond-val.red { color: var(--red); }
-  .cond-val.amber { color: var(--amber); }
-  .cond-val.green { color: var(--green); }
-  .cond-val.cyan { color: var(--cyan); }
-
-  /* ── MAIN CENTER PANELS ── */
-  .center-top {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    border-bottom: var(--border);
-  }
-  .center-panel {
-    padding: 16px;
-    border-right: var(--border);
-  }
-  .center-panel:last-child { border-right: none; }
-
-  /* ── BIG STAT ── */
-  .bigstat-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-  .bigstat-card {
-    background: var(--bg2);
-    border: var(--border);
-    border-radius: 3px;
-    padding: 12px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .bigstat-card::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--red);
-    opacity: 0.6;
-  }
-  .bigstat-card.amber::after { background: var(--amber); }
-  .bigstat-card.blue::after { background: var(--blue); }
-  .bigstat-card.green::after { background: var(--green); }
-  .bigstat-card.cyan::after { background: var(--cyan); }
-  .bigstat-label {
-    font-family: var(--title);
-    font-size: 7px;
-    letter-spacing: 2px;
-    color: var(--gray);
-    margin-bottom: 4px;
-  }
-  .bigstat-num {
-    font-family: var(--title);
-    font-size: clamp(20px, 3vw, 28px);
-    font-weight: 700;
-    line-height: 1;
-    color: var(--red);
-  }
-  .bigstat-card.amber .bigstat-num { color: var(--amber); }
-  .bigstat-card.blue .bigstat-num { color: #5aabff; }
-  .bigstat-card.green .bigstat-num { color: var(--green); }
-  .bigstat-card.cyan .bigstat-num { color: var(--cyan); }
-  .bigstat-sub {
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--gray);
-    margin-top: 3px;
-  }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 1100px) {
-    .grid-outer { grid-template-columns: 200px 1fr; }
-    .sidebar-right { display: none; }
-  }
-  @media (max-width: 768px) {
-    .grid-outer { grid-template-columns: 1fr; }
-    .sidebar { display: none; }
-    .center-top { grid-template-columns: 1fr; }
-  }
-
-  /* ── PULSE ANIMATION ── */
-  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
-  .pulse { animation: pulse 2s ease-in-out infinite; }
-
-  /* ── SCROLLBAR ── */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg0); }
-  ::-webkit-scrollbar-thumb { background: #2a2a32; border-radius: 2px; }
-
-  /* ── FOOTER ── */
-  #footer {
-    background: var(--bg1);
-    border-top: var(--border);
-    padding: 10px 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .footer-note { font-family: var(--mono); font-size: 10px; color: var(--gray); }
-  .source-links { display: flex; gap: 12px; flex-wrap: wrap; }
-  .source-links a {
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--cyan);
-    text-decoration: none;
-    letter-spacing: 1px;
-    opacity: 0.7;
-    transition: opacity 0.2s;
-  }
-  .source-links a:hover { opacity: 1; }
-  .live-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--red);
-    display: inline-block;
-    margin-right: 5px;
-    animation: pulse 1.5s ease-in-out infinite;
-  }
+  #footer{background:var(--bg1);border-top:var(--border);padding:10px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+  .footer-note{font-family:var(--mono);font-size:10px;color:var(--gray);}
+  .source-links{display:flex;gap:12px;flex-wrap:wrap;}
+  .source-links a{font-family:var(--mono);font-size:9px;color:var(--cyan);text-decoration:none;letter-spacing:1px;opacity:0.7;transition:opacity 0.2s;}
+  .source-links a:hover{opacity:1;}
+  .live-dot{width:7px;height:7px;border-radius:50%;background:var(--red);display:inline-block;margin-right:5px;animation:pulse 1.5s ease-in-out infinite;}
 </style>
 </head>
 <body>
@@ -674,31 +197,30 @@
   <div class="topbar-divider"></div>
   <div id="ticker-wrap">
     <div id="ticker">
-      <span class="tick-item alert">⚠ BREAKING: ISRAELI STRIKES HIT TEHRAN SECURITY CHECKPOINTS — DAY 14</span>
-      <span class="tick-item">IRAN FIRES NEW MISSILE BARRAGE AT ISRAEL + HEZBOLLAH SIMULTANEOUS LAUNCH</span>
-      <span class="tick-item alert">US CENTCOM: 6,000+ TARGETS STRUCK IN IRAN SINCE FEB 28</span>
-      <span class="tick-item">IEA RELEASES 400M BARRELS OIL RESERVE — STRAIT OF HORMUZ EFFECTIVELY CLOSED</span>
-      <span class="tick-item alert">NEW IRAN SUPREME LEADER MOJTABA KHAMENEI REPORTEDLY WOUNDED</span>
-      <span class="tick-item">US GAS PRICES HIT $3.63/GAL — 22-MONTH HIGH AMID STRAIT DISRUPTION</span>
-      <span class="tick-item alert">HEZBOLLAH RESUMES FULL MISSILE/DRONE ATTACKS ON ISRAEL FROM LEBANON</span>
-      <span class="tick-item">US MARINES DEPLOYING TO MIDDLE EAST — 2,200 FROM OKINAWA</span>
-      <span class="tick-item">IRAN IRGC NAVY FIRING ON VESSELS IN STRAIT OF HORMUZ</span>
-      <span class="tick-item alert">STATE DEPT ANNOUNCES $10M BOUNTY ON MOJTABA KHAMENEI</span>
-      <span class="tick-item">LEBANON: 687+ KILLED — MASS EVACUATION, UP TO 1M DISPLACED PROJECTED</span>
-      <span class="tick-item">250+ US ORGANIZATIONS CALL TO HALT WAR FUNDING — $11.3B SPENT IN FIRST 6 DAYS</span>
-      <!-- Repeat for seamless loop -->
-      <span class="tick-item alert">⚠ BREAKING: ISRAELI STRIKES HIT TEHRAN SECURITY CHECKPOINTS — DAY 14</span>
-      <span class="tick-item">IRAN FIRES NEW MISSILE BARRAGE AT ISRAEL + HEZBOLLAH SIMULTANEOUS LAUNCH</span>
-      <span class="tick-item alert">US CENTCOM: 6,000+ TARGETS STRUCK IN IRAN SINCE FEB 28</span>
-      <span class="tick-item">IEA RELEASES 400M BARRELS OIL RESERVE — STRAIT OF HORMUZ EFFECTIVELY CLOSED</span>
-      <span class="tick-item alert">NEW IRAN SUPREME LEADER MOJTABA KHAMENEI REPORTEDLY WOUNDED</span>
-      <span class="tick-item">US GAS PRICES HIT $3.63/GAL — 22-MONTH HIGH AMID STRAIT DISRUPTION</span>
-      <span class="tick-item alert">HEZBOLLAH RESUMES FULL MISSILE/DRONE ATTACKS ON ISRAEL FROM LEBANON</span>
-      <span class="tick-item">US MARINES DEPLOYING TO MIDDLE EAST — 2,200 FROM OKINAWA</span>
-      <span class="tick-item">IRAN IRGC NAVY FIRING ON VESSELS IN STRAIT OF HORMUZ</span>
-      <span class="tick-item alert">STATE DEPT ANNOUNCES $10M BOUNTY ON MOJTABA KHAMENEI</span>
-      <span class="tick-item">LEBANON: 687+ KILLED — MASS EVACUATION, UP TO 1M DISPLACED PROJECTED</span>
-      <span class="tick-item">250+ US ORGANIZATIONS CALL TO HALT WAR FUNDING — $11.3B SPENT IN FIRST 6 DAYS</span>
+      <span class="tick-item alert">⚠ DAY 14 — US+ISRAEL STRIKE 6,000–15,000 TARGETS IN IRAN SINCE FEB 28</span>
+      <span class="tick-item">MOJTABA KHAMENEI: "ATTACKS CONTINUE UNTIL ALL US REGIONAL BASES CLOSED" — NO VIDEO, NO AUDIO</span>
+      <span class="tick-item alert">BEIT SHEMESH: IRAN BALLISTIC STRIKE — 9 DEAD INCL. 3 BITON SIBLINGS — BUNKER PENETRATED</span>
+      <span class="tick-item">IEA RELEASES RECORD 400M BARRELS — BRENT CRUDE STILL $94–$102/BBL</span>
+      <span class="tick-item alert">LEBANON: 773+ DEAD — 830,000+ INTERNALLY DISPLACED — IDF THREATENS GROUND INCURSION</span>
+      <span class="tick-item">US WAR COST: $11.3B IN FIRST 6 DAYS — EST $50B ADDITIONAL REQUESTED</span>
+      <span class="tick-item alert">HORMUZ — IRAN IRGC FIRES ON VESSELS — EFFECTIVE CLOSURE — 16+ TANKERS STRUCK</span>
+      <span class="tick-item">10,000 MEROPS DRONES ($14K–$15K EACH) — TASK FORCE SCORPION STRIKE DEPLOYED</span>
+      <span class="tick-item alert">MINAB SCHOOL STRIKE: 100+ CHILDREN KILLED — UNESCO CONDEMNS GOLESTAN PALACE DAMAGE</span>
+      <span class="tick-item">STATE DEPT: $10M BOUNTY ON MOJTABA KHAMENEI, LARIJANI, HIJAZI, KHATIB</span>
+      <span class="tick-item alert">UK AKROTIRI (CYPRUS) HIT BY IRAN DRONE — FRANCE + ITALY FORCES DEPLOYED</span>
+      <span class="tick-item">190+ BALLISTIC MISSILE LAUNCHERS DESTROYED — IRAN PRODUCTION "FUNCTIONALLY DEFEATED"</span>
+      <span class="tick-item alert">⚠ DAY 14 — US+ISRAEL STRIKE 6,000–15,000 TARGETS IN IRAN SINCE FEB 28</span>
+      <span class="tick-item">MOJTABA KHAMENEI: "ATTACKS CONTINUE UNTIL ALL US REGIONAL BASES CLOSED" — NO VIDEO, NO AUDIO</span>
+      <span class="tick-item alert">BEIT SHEMESH: IRAN BALLISTIC STRIKE — 9 DEAD INCL. 3 BITON SIBLINGS — BUNKER PENETRATED</span>
+      <span class="tick-item">IEA RELEASES RECORD 400M BARRELS — BRENT CRUDE STILL $94–$102/BBL</span>
+      <span class="tick-item alert">LEBANON: 773+ DEAD — 830,000+ INTERNALLY DISPLACED — IDF THREATENS GROUND INCURSION</span>
+      <span class="tick-item">US WAR COST: $11.3B IN FIRST 6 DAYS — EST $50B ADDITIONAL REQUESTED</span>
+      <span class="tick-item alert">HORMUZ — IRAN IRGC FIRES ON VESSELS — EFFECTIVE CLOSURE — 16+ TANKERS STRUCK</span>
+      <span class="tick-item">10,000 MEROPS DRONES ($14K–$15K EACH) — TASK FORCE SCORPION STRIKE DEPLOYED</span>
+      <span class="tick-item alert">MINAB SCHOOL STRIKE: 100+ CHILDREN KILLED — UNESCO CONDEMNS GOLESTAN PALACE DAMAGE</span>
+      <span class="tick-item">STATE DEPT: $10M BOUNTY ON MOJTABA KHAMENEI, LARIJANI, HIJAZI, KHATIB</span>
+      <span class="tick-item alert">UK AKROTIRI (CYPRUS) HIT BY IRAN DRONE — FRANCE + ITALY FORCES DEPLOYED</span>
+      <span class="tick-item">190+ BALLISTIC MISSILE LAUNCHERS DESTROYED — IRAN PRODUCTION "FUNCTIONALLY DEFEATED"</span>
     </div>
   </div>
   <div id="clock">LOADING...</div>
@@ -706,671 +228,472 @@
 
 <!-- HEADER -->
 <div id="header">
-  <div class="op-name">OPERATION EPIC FURY // CONFLICT INTELLIGENCE DASHBOARD</div>
+  <div class="op-name">OPERATION EPIC FURY // CONFLICT INTELLIGENCE DASHBOARD v2.0</div>
   <div class="main-title">IRAN–<span>ISRAEL</span>–US WAR MONITOR</div>
-  <div class="sub-title">MIDDLE EAST THEATER • REAL-TIME CONFLICT TRACKING • OSINT AGGREGATED</div>
-  <div class="day-counter">
-    DAY&nbsp;<span id="day-count">14</span>&nbsp;OF ACTIVE COMBAT
-    &nbsp;|&nbsp; INITIATED: 28 FEB 2026
-  </div>
+  <div class="sub-title">MIDDLE EAST THEATER • OSINT AGGREGATED • STRATEGIC ANALYSIS UPDATE — 14 MARCH 2026</div>
+  <div class="day-counter">DAY&nbsp;<span id="day-count">14</span>&nbsp;OF ACTIVE COMBAT &nbsp;|&nbsp; INITIATED: 28 FEB 2026 01:15 ET</div>
 </div>
 
-<!-- MAIN 3-COLUMN GRID -->
+<!-- MAIN GRID -->
 <div class="grid-outer">
 
-  <!-- ═══ LEFT SIDEBAR ═══ -->
+  <!-- LEFT SIDEBAR -->
   <div class="sidebar">
 
-    <!-- CASUALTY TRACKER -->
     <div class="panel">
-      <div class="panel-title red">☠ CASUALTY TRACKER</div>
+      <div class="panel-title red">☠ CASUALTY TRACKER — ALL PARTIES</div>
       <div class="cas-grid">
-
         <div class="cas-card iran">
           <div class="cas-flag">🇮🇷</div>
           <div class="cas-label">IRAN — CIVILIAN + MILITARY</div>
-          <div class="cas-dead" id="iran-dead">1,444+</div>
-          <div class="cas-injured">Injured: <span id="iran-inj">18,551+</span></div>
-          <div style="font-size:10px;color:var(--gray);margin-top:3px;font-family:var(--mono)">src: Iran Health Ministry</div>
+          <div class="cas-dead">1,444–1,450+</div>
+          <div class="cas-injured">Injured: <span>17,000–18,551+</span></div>
+          <div class="cas-src">src: Iran Health Ministry / ACLED</div>
         </div>
-
+        <div class="cas-card leb">
+          <div class="cas-flag">🇱🇧</div>
+          <div class="cas-label">LEBANON — HEZBOLLAH FRONT</div>
+          <div class="cas-dead">773+</div>
+          <div class="cas-injured">Injured: <span>1,774–1,933+</span></div>
+          <div class="cas-src">830,000+ internally displaced</div>
+        </div>
         <div class="cas-card israel">
           <div class="cas-flag">🇮🇱</div>
-          <div class="cas-label">ISRAEL — KILLED IN ACTION</div>
-          <div class="cas-dead" id="israel-dead">15+</div>
-          <div class="cas-injured">Injured: <span>2,000+</span> &nbsp;|&nbsp; Soldiers: <span>14</span></div>
+          <div class="cas-label">ISRAEL — KIA + CIVILIAN</div>
+          <div class="cas-dead">15–19+</div>
+          <div class="cas-injured">Injured: <span>2,000–2,989+</span></div>
+          <div class="cas-src">Beit Shemesh: 9 dead (1 Mar)</div>
         </div>
-
         <div class="cas-card us">
           <div class="cas-flag">🇺🇸</div>
           <div class="cas-label">US MILITARY — KIA</div>
           <div class="cas-dead">11</div>
-          <div class="cas-injured">6 crew KC-135 crash (Iraq)</div>
+          <div class="cas-injured">KC-135 crew: 6 dead (Iraq, 12 Mar)</div>
+          <div class="cas-src">3 F-15s downed (est. friendly fire)</div>
         </div>
-
-        <div class="cas-card leb">
-          <div class="cas-flag">🇱🇧</div>
-          <div class="cas-label">LEBANON — HEZBOLLAH FRONT</div>
-          <div class="cas-dead">687+</div>
-          <div class="cas-injured">Children: <span>98 killed</span></div>
+        <div class="cas-card iraq">
+          <div class="cas-flag">🇮🇶</div>
+          <div class="cas-label">IRAQ — COLLATERAL</div>
+          <div class="cas-dead">27</div>
+          <div class="cas-injured">Dozens injured | Erbil airport hit</div>
         </div>
-
         <div class="cas-card gulf">
           <div class="cas-flag">🌍</div>
-          <div class="cas-label">GULF STATES — COLLATERAL</div>
-          <div class="cas-dead">19+</div>
-          <div class="cas-injured">Bahrain, Kuwait, UAE, Jordan</div>
+          <div class="cas-label">UAE + KUWAIT + BAHRAIN</div>
+          <div class="cas-dead">12+</div>
+          <div class="cas-injured">UAE 131–141 inj | KW 99+ inj</div>
         </div>
-
       </div>
     </div>
 
-    <!-- STRIKE STATISTICS -->
     <div class="panel">
-      <div class="panel-title amber">⚡ STRIKE STATISTICS</div>
-      <div class="stat-row">
-        <span class="stat-label">US+IL targets in Iran</span>
-        <span class="stat-val red">6,000+</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Iran missiles → Israel</span>
-        <span class="stat-val">90+ attempts</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Iranian vessels destroyed</span>
-        <span class="stat-val red">90+</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Iran drones/missiles (region)</span>
-        <span class="stat-val">100s launched</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">US Merops drones deployed</span>
-        <span class="stat-val cyan">10,000</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Ships hit in Hormuz+Gulf</span>
-        <span class="stat-val red">16+</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">US B-2 Stealth bombers used</span>
-        <span class="stat-val white">Confirmed</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">US F-15s downed (friendly)</span>
-        <span class="stat-val amber">3</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Iran civilian sites hit (US claim)</span>
-        <span class="stat-val red">~10,000</span>
-      </div>
+      <div class="panel-title amber">⚡ OPERATIONAL PARAMETERS</div>
+      <div class="stat-row"><span class="stat-label">Targets struck — CENTCOM</span><span class="stat-val red">6,000+</span></div>
+      <div class="stat-row"><span class="stat-label">Targets struck — MoD estimate</span><span class="stat-val red">15,000+</span></div>
+      <div class="stat-row"><span class="stat-label">Iranian naval vessels destroyed</span><span class="stat-val red">50–90+</span></div>
+      <div class="stat-row"><span class="stat-label">Ballistic launchers destroyed</span><span class="stat-val red">190+</span></div>
+      <div class="stat-row"><span class="stat-label">Tankers struck (Hormuz / Gulf)</span><span class="stat-val red">16+</span></div>
+      <div class="stat-row"><span class="stat-label">Merops interceptor drones</span><span class="stat-val cyan">10,000</span></div>
+      <div class="stat-row"><span class="stat-label">B-2 Spirit stealth bombers</span><span class="stat-val white">Confirmed</span></div>
+      <div class="stat-row"><span class="stat-label">USS Gerald R. Ford (CVN-78)</span><span class="stat-val cyan">On station</span></div>
+      <div class="stat-row"><span class="stat-label">Civilian sites hit (Iran claim)</span><span class="stat-val amber">~10,000</span></div>
+      <div class="stat-row"><span class="stat-label">Iran missile production</span><span class="stat-val green">Functionally defeated</span></div>
+      <div class="stat-row"><span class="stat-label">Op cost — first 6 days</span><span class="stat-val red">$11.3B USD</span></div>
+      <div class="stat-row"><span class="stat-label">Additional funding requested</span><span class="stat-val amber">~$50B</span></div>
     </div>
 
-    <!-- THEATER CONDITIONS -->
     <div class="panel">
       <div class="panel-title cyan">◈ THEATER CONDITIONS</div>
       <div class="cond-grid">
-        <div class="cond-item">
-          <div class="cond-ico">🚢</div>
-          <div class="cond-label">HORMUZ</div>
-          <div class="cond-val red">BLOCKED</div>
-        </div>
-        <div class="cond-item">
-          <div class="cond-ico">✈️</div>
-          <div class="cond-label">IRAN AIRSPACE</div>
-          <div class="cond-val red">CLOSED</div>
-        </div>
-        <div class="cond-item">
-          <div class="cond-ico">🛢️</div>
-          <div class="cond-label">IRAN OIL</div>
-          <div class="cond-val amber">HALTED</div>
-        </div>
-        <div class="cond-item">
-          <div class="cond-ico">🌐</div>
-          <div class="cond-label">IRAN INTERNET</div>
-          <div class="cond-val red">RESTRICTED</div>
-        </div>
-        <div class="cond-item">
-          <div class="cond-ico">🏛️</div>
-          <div class="cond-label">IRAN REGIME</div>
-          <div class="cond-val amber">TRANSITION</div>
-        </div>
-        <div class="cond-item">
-          <div class="cond-ico">🧱</div>
-          <div class="cond-label">IRAN NUKES</div>
-          <div class="cond-val green">DEGRADED</div>
-        </div>
+        <div class="cond-item"><div class="cond-ico">🚢</div><div class="cond-label">HORMUZ</div><div class="cond-val red">BLOCKED</div></div>
+        <div class="cond-item"><div class="cond-ico">✈️</div><div class="cond-label">IRAN AIRSPACE</div><div class="cond-val red">CLOSED</div></div>
+        <div class="cond-item"><div class="cond-ico">🛢️</div><div class="cond-label">IRAN OIL</div><div class="cond-val amber">DISRUPTED</div></div>
+        <div class="cond-item"><div class="cond-ico">🌐</div><div class="cond-label">IRAN INTERNET</div><div class="cond-val red">BLACKOUT</div></div>
+        <div class="cond-item"><div class="cond-ico">🏛️</div><div class="cond-label">IRAN REGIME</div><div class="cond-val amber">TRANSITION</div></div>
+        <div class="cond-item"><div class="cond-ico">☢️</div><div class="cond-label">IRAN NUKES</div><div class="cond-val green">DEGRADED</div></div>
+        <div class="cond-item"><div class="cond-ico">🏗️</div><div class="cond-label">KHARG ISLAND</div><div class="cond-val red">STRUCK</div></div>
+        <div class="cond-item"><div class="cond-ico">🛡️</div><div class="cond-label">CYPRUS BASE</div><div class="cond-val amber">UNDER THREAT</div></div>
       </div>
     </div>
 
-  </div><!-- /sidebar left -->
+  </div>
 
-  <!-- ═══ CENTER MAIN ═══ -->
+  <!-- CENTER -->
   <div class="main-area">
 
-    <!-- BIG STATS ROW -->
-    <div style="padding:16px; background:var(--bg1); border-bottom:var(--border);">
-      <div class="panel-title" style="color:var(--gray);font-family:var(--title);font-size:9px;letter-spacing:3px;margin-bottom:12px;">◈ KEY METRICS — OP EPIC FURY</div>
+    <div style="padding:16px;background:var(--bg1);border-bottom:var(--border);">
+      <div class="panel-title" style="color:var(--gray);font-family:var(--title);font-size:9px;letter-spacing:3px;margin-bottom:12px;">◈ KEY METRICS — OPERATION EPIC FURY</div>
       <div class="bigstat-grid">
         <div class="bigstat-card">
-          <div class="bigstat-label">TOTAL DEAD (ALL PARTIES)</div>
-          <div class="bigstat-num" id="total-dead">2,000+</div>
-          <div class="bigstat-sub">incl. Lebanon + Gulf states</div>
+          <div class="bigstat-label">TOTAL DEAD — ALL PARTIES</div>
+          <div class="bigstat-num" id="total-dead">2,275+</div>
+          <div class="bigstat-sub">Iran + Lebanon + Israel + US + Gulf</div>
         </div>
         <div class="bigstat-card amber">
-          <div class="bigstat-label">US WAR COST (FIRST 6 DAYS)</div>
+          <div class="bigstat-label">US WAR COST — FIRST 6 DAYS</div>
           <div class="bigstat-num">$11.3B</div>
-          <div class="bigstat-sub">funding calls to halt</div>
+          <div class="bigstat-sub">~$50B additional requested</div>
         </div>
         <div class="bigstat-card blue">
           <div class="bigstat-label">TARGETS STRUCK IN IRAN</div>
-          <div class="bigstat-num">6,000+</div>
-          <div class="bigstat-sub">US CENTCOM confirmed</div>
+          <div class="bigstat-num">6K–15K</div>
+          <div class="bigstat-sub">CENTCOM 6,000 / MoD 15,000</div>
         </div>
         <div class="bigstat-card green">
           <div class="bigstat-label">IEA EMERGENCY OIL RELEASE</div>
-          <div class="bigstat-num">400M</div>
-          <div class="bigstat-sub">barrels — record release</div>
+          <div class="bigstat-num">400M bbl</div>
+          <div class="bigstat-sub">Record — largest in history</div>
+        </div>
+        <div class="bigstat-card cyan">
+          <div class="bigstat-label">MEROPS DRONES DEPLOYED</div>
+          <div class="bigstat-num">10,000</div>
+          <div class="bigstat-sub">$14K–$15K/unit vs $3M Patriot</div>
+        </div>
+        <div class="bigstat-card purple">
+          <div class="bigstat-label">BALLISTIC LAUNCHERS DESTROYED</div>
+          <div class="bigstat-num">190+</div>
+          <div class="bigstat-sub">Production capacity: defeated</div>
         </div>
       </div>
 
-      <!-- CAPABILITY BARS -->
-      <div style="margin-top:12px;">
-        <div style="font-family:var(--title);font-size:8px;letter-spacing:2px;color:var(--gray);margin-bottom:8px;">IRAN MILITARY CAPABILITY DEGRADATION (EST.)</div>
+      <div style="margin-top:14px;">
+        <div style="font-family:var(--title);font-size:8px;letter-spacing:2px;color:var(--gray);margin-bottom:8px;">IRAN MILITARY CAPABILITY DEGRADATION — ESTIMATED (DAY 14)</div>
+        <div class="status-row">
+          <div class="status-label">Missile Production</div>
+          <div class="status-bar-bg"><div class="status-bar-fill" style="width:80%;background:var(--red);"></div></div>
+          <div class="status-pct" style="color:var(--red)">80%</div>
+        </div>
+        <div class="status-row">
+          <div class="status-label">Air Defense S-300/S-400</div>
+          <div class="status-bar-bg"><div class="status-bar-fill" style="width:72%;background:var(--red);"></div></div>
+          <div class="status-pct" style="color:var(--red)">72%</div>
+        </div>
         <div class="status-row">
           <div class="status-label">Nuclear Program</div>
           <div class="status-bar-bg"><div class="status-bar-fill" style="width:65%;background:var(--red);"></div></div>
           <div class="status-pct" style="color:var(--red)">65%</div>
         </div>
         <div class="status-row">
-          <div class="status-label">Ballistic Missiles</div>
-          <div class="status-bar-bg"><div class="status-bar-fill" style="width:40%;background:var(--amber);"></div></div>
-          <div class="status-pct" style="color:var(--amber)">40%</div>
+          <div class="status-label">C2 / IRGC Command</div>
+          <div class="status-bar-bg"><div class="status-bar-fill" style="width:60%;background:var(--amber);"></div></div>
+          <div class="status-pct" style="color:var(--amber)">60%</div>
         </div>
         <div class="status-row">
-          <div class="status-label">Air Defense</div>
-          <div class="status-bar-bg"><div class="status-bar-fill" style="width:72%;background:var(--red);"></div></div>
-          <div class="status-pct" style="color:var(--red)">72%</div>
+          <div class="status-label">Ballistic Missiles (stockpile)</div>
+          <div class="status-bar-bg"><div class="status-bar-fill" style="width:45%;background:var(--amber);"></div></div>
+          <div class="status-pct" style="color:var(--amber)">45%</div>
         </div>
         <div class="status-row">
-          <div class="status-label">Naval (Hormuz)</div>
-          <div class="status-bar-bg"><div class="status-bar-fill" style="width:30%;background:#5a80ff;"></div></div>
-          <div class="status-pct" style="color:#5a80ff">30%</div>
+          <div class="status-label">Naval (Hormuz/Gulf)</div>
+          <div class="status-bar-bg"><div class="status-bar-fill" style="width:40%;background:#5a80ff;"></div></div>
+          <div class="status-pct" style="color:#5a80ff">40%</div>
         </div>
         <div class="status-row">
-          <div class="status-label">Hezbollah Proxy</div>
+          <div class="status-label">Hezbollah Proxy Ops</div>
           <div class="status-bar-bg"><div class="status-bar-fill" style="width:20%;background:var(--amber);"></div></div>
           <div class="status-pct" style="color:var(--amber)">20%</div>
         </div>
       </div>
     </div>
 
-    <!-- CONFLICT MAP -->
+    <!-- MAP -->
     <div id="map-container">
       <div class="map-title cyan">◉ REGIONAL CONFLICT MAP — MIDDLE EAST THEATER</div>
-      <svg width="100%" viewBox="0 0 700 380" style="display:block;max-height:380px;" xmlns="http://www.w3.org/2000/svg">
+      <svg width="100%" viewBox="0 0 700 390" style="display:block;max-height:390px;" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <radialGradient id="glow-red" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#e03030" stop-opacity="0.4"/>
-            <stop offset="100%" stop-color="#e03030" stop-opacity="0"/>
-          </radialGradient>
-          <radialGradient id="glow-blue" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#3399ff" stop-opacity="0.3"/>
-            <stop offset="100%" stop-color="#3399ff" stop-opacity="0"/>
-          </radialGradient>
-          <radialGradient id="glow-amber" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#e07020" stop-opacity="0.3"/>
-            <stop offset="100%" stop-color="#e07020" stop-opacity="0"/>
-          </radialGradient>
-          <marker id="marr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-            <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          </marker>
+          <radialGradient id="gr-red" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#e03030" stop-opacity="0.45"/><stop offset="100%" stop-color="#e03030" stop-opacity="0"/></radialGradient>
+          <radialGradient id="gr-blue" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#3399ff" stop-opacity="0.3"/><stop offset="100%" stop-color="#3399ff" stop-opacity="0"/></radialGradient>
+          <radialGradient id="gr-amb" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#e07020" stop-opacity="0.3"/><stop offset="100%" stop-color="#e07020" stop-opacity="0"/></radialGradient>
+          <marker id="marr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker>
         </defs>
-
-        <!-- BACKGROUND - MAP-STYLE -->
-        <rect width="700" height="380" fill="#0a0a0f"/>
-
-        <!-- GRID LINES -->
+        <rect width="700" height="390" fill="#0a0a0f"/>
         <g stroke="#1a1a22" stroke-width="0.5" stroke-dasharray="3 6">
-          <line x1="0" y1="76" x2="700" y2="76"/><line x1="0" y1="152" x2="700" y2="152"/>
-          <line x1="0" y1="228" x2="700" y2="228"/><line x1="0" y1="304" x2="700" y2="304"/>
-          <line x1="140" y1="0" x2="140" y2="380"/><line x1="280" y1="0" x2="280" y2="380"/>
-          <line x1="420" y1="0" x2="420" y2="380"/><line x1="560" y1="0" x2="560" y2="380"/>
+          <line x1="0" y1="78" x2="700" y2="78"/><line x1="0" y1="156" x2="700" y2="156"/><line x1="0" y1="234" x2="700" y2="234"/><line x1="0" y1="312" x2="700" y2="312"/>
+          <line x1="140" y1="0" x2="140" y2="390"/><line x1="280" y1="0" x2="280" y2="390"/><line x1="420" y1="0" x2="420" y2="390"/><line x1="560" y1="0" x2="560" y2="390"/>
         </g>
+        <path d="M140 28 L320 28 L340 55 L318 70 L218 75 L140 55 Z" fill="#14141e" stroke="#2a2a36" stroke-width="0.5"/>
+        <path d="M218 75 L290 75 L290 122 L218 122 Z" fill="#14141e" stroke="#2a2a36" stroke-width="0.5"/>
+        <path d="M290 75 L382 75 L402 132 L360 162 L278 150 L270 122 Z" fill="#14141e" stroke="#2a2a36" stroke-width="0.5"/>
+        <path d="M382 44 L545 44 L582 92 L582 188 L522 222 L422 222 L382 182 L360 132 L382 80 Z" fill="#180808" stroke="#3a1010" stroke-width="1"/>
+        <path d="M258 162 L422 162 L442 262 L340 302 L218 272 L198 202 Z" fill="#14141e" stroke="#2a2a36" stroke-width="0.5"/>
+        <path d="M442 202 L542 222 L562 282 L502 322 L440 302 Z" fill="#14141e" stroke="#2a2a36" stroke-width="0.5"/>
+        <path d="M98 122 L198 122 L198 202 L118 232 L78 182 Z" fill="#14141e" stroke="#2a2a36" stroke-width="0.5"/>
+        <rect x="188" y="126" width="32" height="36" fill="#0a1a30" stroke="#1a3a5a" stroke-width="0.5"/>
+        <path d="M278 292 L442 282 L462 332 L298 342 Z" fill="#14141e" stroke="#2a2a36" stroke-width="0.5"/>
+        <rect x="145" y="55" width="30" height="16" rx="3" fill="#111820" stroke="#2a3a50" stroke-width="0.5"/>
 
-        <!-- LAND MASSES (simplified) -->
-        <!-- Turkey -->
-        <path d="M140 30 L320 30 L340 55 L320 70 L220 75 L140 55 Z" fill="#14141e" stroke="#2a2a36" stroke-width="0.5"/>
-        <!-- Syria/Lebanon region -->
-        <path d="M220 75 L290 75 L290 120 L220 120 Z" fill="#14141e" stroke="#2a2a36" stroke-width="0.5"/>
-        <!-- Iraq -->
-        <path d="M290 75 L380 75 L400 130 L360 160 L280 150 L270 120 Z" fill="#14141e" stroke="#2a2a36" stroke-width="0.5"/>
-        <!-- Iran — highlighted red zone -->
-        <path d="M380 45 L540 45 L580 90 L580 185 L520 220 L420 220 L380 180 L360 130 L380 80 Z" fill="#180808" stroke="#3a1010" stroke-width="1"/>
-        <!-- Saudi Arabia -->
-        <path d="M260 160 L420 160 L440 260 L340 300 L220 270 L200 200 Z" fill="#14141e" stroke="#2a2a36" stroke-width="0.5"/>
-        <!-- UAE/Oman -->
-        <path d="M440 200 L540 220 L560 280 L500 320 L440 300 Z" fill="#14141e" stroke="#2a2a36" stroke-width="0.5"/>
-        <!-- Egypt/Sinai -->
-        <path d="M100 120 L200 120 L200 200 L120 230 L80 180 Z" fill="#14141e" stroke="#2a2a36" stroke-width="0.5"/>
-        <!-- Israel/Palestine small -->
-        <rect x="190" y="125" width="30" height="35" fill="#0a1a30" stroke="#1a3a5a" stroke-width="0.5"/>
-        <!-- Yemen -->
-        <path d="M280 290 L440 280 L460 330 L300 340 Z" fill="#14141e" stroke="#2a2a36" stroke-width="0.5"/>
-        <!-- Water bodies (Persian Gulf / Red Sea) -->
-        <path d="M380 180 L420 160 L440 200 L420 220 Z" fill="#070d14" stroke="none"/>
-
-        <!-- IRAN STRIKE ZONES -->
-        <circle cx="480" cy="130" r="40" fill="url(#glow-red)" class="pulse"/>
-        <circle cx="480" cy="130" r="24" fill="rgba(224,48,48,0.1)" stroke="#e03030" stroke-width="0.5" stroke-dasharray="4 3"/>
-
-        <!-- TEHRAN MARKER -->
+        <circle cx="480" cy="130" r="44" fill="url(#gr-red)" class="pulse"/>
+        <circle cx="480" cy="130" r="26" fill="rgba(224,48,48,0.08)" stroke="#e03030" stroke-width="0.5" stroke-dasharray="4 3"/>
         <circle cx="480" cy="120" r="7" fill="#e03030" stroke="#ff6060" stroke-width="1.5"/>
-        <text x="492" y="118" fill="#e03030" font-size="9" font-family="'Orbitron',sans-serif" font-weight="700">TEHRAN</text>
-        <text x="492" y="130" fill="#aa3030" font-size="8" font-family="'Share Tech Mono',monospace">STRIKE ZONE</text>
+        <text x="494" y="118" fill="#e03030" font-size="9" font-family="'Orbitron',sans-serif" font-weight="700">TEHRAN</text>
+        <text x="494" y="130" fill="#aa3030" font-size="7" font-family="'Share Tech Mono',monospace">PRIMARY STRIKE ZONE</text>
 
-        <!-- ISRAEL MARKER -->
-        <circle cx="200" cy="140" r="6" fill="#3399ff" stroke="#66bbff" stroke-width="1.5"/>
-        <circle cx="200" cy="140" r="20" fill="url(#glow-blue)"/>
-        <text x="172" y="136" fill="#5aabff" font-size="9" font-family="'Orbitron',sans-serif" font-weight="700">ISRAEL</text>
-        <text x="172" y="148" fill="#3a7acc" font-size="8" font-family="'Share Tech Mono',monospace">TEL AVIV</text>
+        <circle cx="450" cy="168" r="4" fill="#e03030"/>
+        <circle cx="450" cy="168" r="12" fill="rgba(224,48,48,0.2)" class="pulse"/>
+        <text x="457" y="164" fill="#cc2020" font-size="7" font-family="'Share Tech Mono',monospace">KHARG IS. ⚡</text>
+        <text x="457" y="173" fill="#882020" font-size="7" font-family="'Share Tech Mono',monospace">OIL HUB STRUCK</text>
 
-        <!-- BEIRUT/LEBANON MARKER -->
+        <circle cx="535" cy="196" r="3" fill="#ff4040"/>
+        <text x="542" y="194" fill="#ff4040" font-size="7" font-family="'Share Tech Mono',monospace">MINAB ☠</text>
+        <text x="542" y="203" fill="#cc3030" font-size="7" font-family="'Share Tech Mono',monospace">100+ CHILDREN</text>
+
+        <circle cx="200" cy="142" r="6" fill="#3399ff" stroke="#66bbff" stroke-width="1.5"/>
+        <circle cx="200" cy="142" r="22" fill="url(#gr-blue)"/>
+        <text x="170" y="136" fill="#5aabff" font-size="8" font-family="'Orbitron',sans-serif" font-weight="700">ISRAEL</text>
+        <text x="170" y="148" fill="#3a7acc" font-size="7" font-family="'Share Tech Mono',monospace">TEL AVIV / BEIT SHEMESH</text>
+
         <circle cx="208" cy="108" r="4" fill="#20b050" stroke="#40d070" stroke-width="1"/>
-        <text x="216" y="112" fill="#20b050" font-size="8" font-family="'Orbitron',sans-serif">BEIRUT</text>
+        <text x="218" y="112" fill="#20b050" font-size="8" font-family="'Orbitron',sans-serif">BEIRUT</text>
 
-        <!-- ATTACK ARROWS: IRAN → ISRAEL -->
-        <path d="M470 130 Q380 100 220 142" fill="none" stroke="#e03030" stroke-width="1.5" stroke-dasharray="6 3" marker-end="url(#marr)" opacity="0.8" class="pulse"/>
-        <path d="M465 140 Q370 115 222 138" fill="none" stroke="#e03030" stroke-width="1" stroke-dasharray="5 4" marker-end="url(#marr)" opacity="0.5"/>
+        <circle cx="160" cy="63" r="4" fill="#5a80ff" stroke="#8aaaff" stroke-width="1"/>
+        <text x="169" y="60" fill="#5a80ff" font-size="7" font-family="'Share Tech Mono',monospace">AKROTIRI (UK)</text>
+        <text x="169" y="69" fill="#3a5acc" font-size="7" font-family="'Share Tech Mono',monospace">DRONE STRIKE</text>
 
-        <!-- ATTACK ARROWS: HEZBOLLAH → ISRAEL -->
-        <path d="M205 112 L202 133" fill="none" stroke="#aaaa30" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#marr)" opacity="0.9"/>
+        <circle cx="432" cy="196" r="5" fill="#e07020" stroke="#ff9040" stroke-width="1"/>
+        <circle cx="432" cy="196" r="14" fill="url(#gr-amb)"/>
+        <text x="441" y="194" fill="#e07020" font-size="7" font-family="'Share Tech Mono',monospace">BAHRAIN</text>
+        <text x="441" y="203" fill="#aa5010" font-size="7" font-family="'Share Tech Mono',monospace">US 5TH FLEET</text>
 
-        <!-- ATTACK ARROWS: ISRAEL+US → IRAN -->
-        <path d="M205 135 Q340 80 455 120" fill="none" stroke="#5aabff" stroke-width="2" stroke-dasharray="8 3" marker-end="url(#marr)" opacity="0.7"/>
-        <path d="M208 138 Q360 110 460 125" fill="none" stroke="#4488cc" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#marr)" opacity="0.4"/>
+        <circle cx="492" cy="220" r="3" fill="#e07020"/>
+        <text x="499" y="224" fill="#aa5010" font-size="7" font-family="'Share Tech Mono',monospace">DUBAI — STRUCK</text>
 
-        <!-- BAHRAIN (US 5TH FLEET) -->
-        <circle cx="430" cy="195" r="4" fill="#e07020" stroke="#ff9040" stroke-width="1"/>
-        <text x="438" y="199" fill="#e07020" font-size="8" font-family="'Share Tech Mono',monospace">BAHRAIN</text>
+        <circle cx="388" cy="178" r="3" fill="#aaaa20"/>
+        <text x="394" y="176" fill="#888820" font-size="7" font-family="'Share Tech Mono',monospace">KUWAIT</text>
+        <text x="394" y="185" fill="#666610" font-size="7" font-family="'Share Tech Mono',monospace">US EMBASSY HIT</text>
 
-        <!-- ATTACK ARROWS: IRAN → BAHRAIN -->
-        <path d="M465 155 Q455 175 438 193" fill="none" stroke="#cc6010" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#marr)" opacity="0.6"/>
+        <!-- Attack vectors -->
+        <path d="M472 126 Q378 96 218 144" fill="none" stroke="#e03030" stroke-width="2" stroke-dasharray="7 3" marker-end="url(#marr)" opacity="0.85" class="pulse"/>
+        <path d="M468 136 Q368 108 220 140" fill="none" stroke="#e03030" stroke-width="1" stroke-dasharray="5 4" marker-end="url(#marr)" opacity="0.4"/>
+        <path d="M462 156 Q452 175 440 192" fill="none" stroke="#cc6010" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#marr)" opacity="0.6"/>
+        <path d="M460 154 Q428 162 393 175" fill="none" stroke="#cc6010" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#marr)" opacity="0.5"/>
+        <path d="M455 108 Q330 78 168 63" fill="none" stroke="#cc6010" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#marr)" opacity="0.45"/>
+        <path d="M204 112 L202 132" fill="none" stroke="#aaaa30" stroke-width="1.8" stroke-dasharray="4 3" marker-end="url(#marr)" opacity="0.9"/>
+        <path d="M204 135 Q340 76 456 118" fill="none" stroke="#5aabff" stroke-width="2.2" stroke-dasharray="9 3" marker-end="url(#marr)" opacity="0.75"/>
+        <path d="M207 137 Q360 108 462 124" fill="none" stroke="#4488cc" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#marr)" opacity="0.4"/>
 
-        <!-- UAE/DUBAI MARKER -->
-        <circle cx="490" cy="218" r="3" fill="#e07020" stroke="#ff9040" stroke-width="1"/>
-        <text x="497" y="222" fill="#aa5010" font-size="7" font-family="'Share Tech Mono',monospace">DUBAI</text>
+        <rect x="474" y="236" width="120" height="14" fill="rgba(200,80,0,0.12)" stroke="#cc6000" stroke-width="0.5" rx="2"/>
+        <text x="482" y="247" fill="#cc6000" font-size="8" font-family="'Share Tech Mono',monospace">⚠ HORMUZ CLOSED</text>
 
-        <!-- ATTACK: IRAN → UAE -->
-        <path d="M520 210 L498 216" fill="none" stroke="#cc6010" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#marr)" opacity="0.5"/>
+        <rect x="8" y="298" width="174" height="88" fill="#0d0d14" stroke="#2a2a32" stroke-width="0.5" rx="3"/>
+        <text x="16" y="315" fill="#606070" font-size="8" font-family="'Orbitron',sans-serif" letter-spacing="2">LEGEND</text>
+        <line x1="16" y1="326" x2="40" y2="326" stroke="#e03030" stroke-width="2" stroke-dasharray="6 2"/><text x="46" y="330" fill="#cc8080" font-size="8" font-family="'Share Tech Mono',monospace">Iran ballistic strikes</text>
+        <line x1="16" y1="341" x2="40" y2="341" stroke="#5aabff" stroke-width="2.2" stroke-dasharray="8 3"/><text x="46" y="345" fill="#8aabcc" font-size="8" font-family="'Share Tech Mono',monospace">US + Israel strikes</text>
+        <line x1="16" y1="356" x2="40" y2="356" stroke="#aaaa30" stroke-width="1.8" stroke-dasharray="4 2"/><text x="46" y="360" fill="#aaaa60" font-size="8" font-family="'Share Tech Mono',monospace">Hezbollah attacks</text>
+        <line x1="16" y1="371" x2="40" y2="371" stroke="#cc6010" stroke-width="1.2" stroke-dasharray="4 2"/><text x="46" y="375" fill="#cc8040" font-size="8" font-family="'Share Tech Mono',monospace">Iran → Gulf targets</text>
 
-        <!-- HORMUZ STRAIT LABEL -->
-        <text x="480" y="245" fill="#cc6000" font-size="8" font-family="'Share Tech Mono',monospace">⚠ HORMUZ CLOSED</text>
-        <rect x="476" y="234" width="110" height="14" fill="rgba(200,80,0,0.1)" stroke="#cc6000" stroke-width="0.5" rx="2"/>
-
-        <!-- KHARG ISLAND LABEL -->
-        <circle cx="445" cy="165" r="3" fill="#e03030"/>
-        <text x="452" y="162" fill="#cc2020" font-size="7" font-family="'Share Tech Mono',monospace">KHARG IS.</text>
-        <text x="452" y="171" fill="#882020" font-size="7" font-family="'Share Tech Mono',monospace">OIL HUB HIT</text>
-
-        <!-- LEGEND -->
-        <rect x="10" y="295" width="160" height="80" fill="#0d0d14" stroke="#2a2a32" stroke-width="0.5" rx="3"/>
-        <text x="18" y="312" fill="#606070" font-size="8" font-family="'Orbitron',sans-serif" letter-spacing="2">LEGEND</text>
-        <line x1="18" y1="322" x2="40" y2="322" stroke="#e03030" stroke-width="1.5" stroke-dasharray="5 2"/>
-        <text x="46" y="326" fill="#cc8080" font-size="8" font-family="'Share Tech Mono',monospace">Iran strikes</text>
-        <line x1="18" y1="336" x2="40" y2="336" stroke="#5aabff" stroke-width="2" stroke-dasharray="7 3"/>
-        <text x="46" y="340" fill="#8aabcc" font-size="8" font-family="'Share Tech Mono',monospace">US+Israel strikes</text>
-        <line x1="18" y1="350" x2="40" y2="350" stroke="#aaaa30" stroke-width="1.5" stroke-dasharray="4 2"/>
-        <text x="46" y="354" fill="#aaaa60" font-size="8" font-family="'Share Tech Mono',monospace">Hezbollah attacks</text>
-        <circle cx="24" cy="366" r="4" fill="#e07020"/>
-        <text x="34" y="370" fill="#cc8040" font-size="8" font-family="'Share Tech Mono',monospace">US base / target</text>
-
-        <!-- COORDINATE LABELS -->
-        <text x="3" y="60" fill="#303038" font-size="7" font-family="'Share Tech Mono',monospace">40°N</text>
-        <text x="3" y="135" fill="#303038" font-size="7" font-family="'Share Tech Mono',monospace">32°N</text>
-        <text x="3" y="210" fill="#303038" font-size="7" font-family="'Share Tech Mono',monospace">24°N</text>
-
-        <!-- WATERMARK -->
-        <text x="350" y="375" fill="#1a1a22" font-size="8" font-family="'Orbitron',sans-serif" text-anchor="middle" letter-spacing="3">WAR-DASHBOARD.GITHUB.IO</text>
+        <text x="3" y="60" fill="#252530" font-size="7" font-family="'Share Tech Mono',monospace">40°N</text>
+        <text x="3" y="138" fill="#252530" font-size="7" font-family="'Share Tech Mono',monospace">32°N</text>
+        <text x="3" y="216" fill="#252530" font-size="7" font-family="'Share Tech Mono',monospace">24°N</text>
+        <text x="696" y="386" fill="#1a1a22" font-size="7" font-family="'Orbitron',sans-serif" text-anchor="end" letter-spacing="2">WAR-DASHBOARD.GITHUB.IO</text>
       </svg>
-
       <div class="map-legend">
-        <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Iran — Active Strike Zone</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Iran Strike Zone</div>
         <div class="legend-item"><div class="legend-dot" style="background:#5aabff"></div>Israel — Target + Defender</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div>US Bases Under Attack</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Lebanon/Hezbollah Front</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#aaaa20"></div>Collateral Conflict Zones</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div>US Bases / Gulf Targets</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Hezbollah Front (Lebanon)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#5a80ff"></div>Allied Bases (NATO)</div>
       </div>
     </div>
 
-    <!-- TIMELINE + NEWS (2-COL) -->
+    <!-- TIMELINE + INTEL -->
     <div class="center-top">
-      <!-- TIMELINE -->
       <div class="center-panel">
-        <div class="panel-title amber">⏱ CONFLICT TIMELINE</div>
-
-        <div class="tl-item">
-          <div class="tl-date">14 MAR</div>
-          <div class="tl-text"><span class="tl-dot"></span><span class="tag isr">ISR</span> Heavy strikes on Tehran security posts. New Iran Supreme Leader issues warning via state TV.</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-date">13 MAR</div>
-          <div class="tl-text"><span class="tl-dot"></span><span class="tag iran">IRAN</span> Fresh missile barrage at Israel. Hezbollah joint missile op launched. 179 Israelis injured in 24h.</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-date">13 MAR</div>
-          <div class="tl-text"><span class="tl-dot amber"></span><span class="tag us">US</span> 6,000 targets struck confirmed. 90+ Iranian vessels destroyed. US Marines from Okinawa deploying.</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-date">13 MAR</div>
-          <div class="tl-text"><span class="tl-dot"></span><span class="tag iran">IRAN</span> Hegseth: "New supreme leader wounded and likely disfigured." State Dept: $10M bounty on Khamenei Jr.</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-date">12 MAR</div>
-          <div class="tl-text"><span class="tl-dot amber"></span><span class="tag us">US</span> KC-135 refueler crashes in Iraq — all 6 crew killed. No hostile fire involved.</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-date">12 MAR</div>
-          <div class="tl-text"><span class="tl-dot amber"></span><span class="tag econ">ECON</span> Qatar Airways resuming 29 flights after Iranian drone disruption at LNG facilities.</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-date">11 MAR</div>
-          <div class="tl-text"><span class="tl-dot amber"></span><span class="tag econ">IEA</span> Releases record 400 million barrels crude oil to offset Hormuz disruption.</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-date">11 MAR</div>
-          <div class="tl-text"><span class="tl-dot"></span><span class="tag iran">IRAN</span> IRGC navy fires on + stops 2 vessels in Strait of Hormuz. Oman rescues 20 sailors from Thai tanker.</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-date">10 MAR</div>
-          <div class="tl-text"><span class="tl-dot amber"></span><span class="tag econ">ECON</span> DOW falls 400+ pts. US gas avg $3.63/gal — 22-month high. Iran: 1,348 civilian dead.</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-date">05 MAR</div>
-          <div class="tl-text"><span class="tl-dot"></span><span class="tag isr">ISR</span> Azadi Sport Complex (Tehran) bombed. UNESCO condemns Golestan Palace damage (2 Mar).</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-date">04 MAR</div>
-          <div class="tl-text"><span class="tl-dot"></span><span class="tag iran">IRAN</span> New Supreme Leader Mojtaba Khamenei named after assassination of Ali Khamenei.</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-date">02 MAR</div>
-          <div class="tl-text"><span class="tl-dot"></span><span class="tag us">US</span> Embassy in Kuwait struck — closed indefinitely. US tanker Stena Imperative hit.</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-date">01 MAR</div>
-          <div class="tl-text"><span class="tl-dot"></span><span class="tag iran">IRAN</span> Beit Shemesh (Israel) ballistic missile strike: 9 killed, 20+ injured. Plumes over Tehran.</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-date">01 MAR</div>
-          <div class="tl-text"><span class="tl-dot amber"></span><span class="tag us">US</span> Trump: "Accepted Iranian proposal for negotiations" — Ali Larijani rejects talks.</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-date">28 FEB</div>
-          <div class="tl-text"><span class="tl-dot"></span><span class="tag isr">ISR</span>+<span class="tag us">US</span> Operation Epic Fury initiated. Khamenei Sr. killed. Iran launches retaliatory drones/missiles.</div>
-        </div>
+        <div class="panel-title amber">⏱ CONFLICT TIMELINE — OP EPIC FURY</div>
+        <div class="tl-item"><div class="tl-date">14 MAR</div><div class="tl-text"><span class="tl-dot"></span><span class="tag isr">ISR</span>Heavy strikes on Tehran Basij force checkpoints. IDF: "undermining regime authority." Explosions near Al Quds Day rally.</div></div>
+        <div class="tl-item"><div class="tl-date">14 MAR</div><div class="tl-text"><span class="tl-dot amber"></span><span class="tag us">US</span>State Dept: $10M bounty on Mojtaba Khamenei, Ali Hijazi, Esmail Khatib, Ali Larijani — designated terrorist leaders.</div></div>
+        <div class="tl-item"><div class="tl-date">14 MAR</div><div class="tl-text"><span class="tl-dot"></span><span class="tag iran">IRAN</span>Mojtaba's 1st statement via state TV newsreader only — no original audio/video. Hegseth: "he is scared and disfigured."</div></div>
+        <div class="tl-item"><div class="tl-date">13 MAR</div><div class="tl-text"><span class="tl-dot amber"></span><span class="tag us">US</span>CENTCOM confirms 6,000+ targets struck, 90+ Iranian vessels destroyed. 10,000 Merops drones (Task Force Scorpion Strike) deployed.</div></div>
+        <div class="tl-item"><div class="tl-date">13 MAR</div><div class="tl-text"><span class="tl-dot"></span><span class="tag iran">IRAN</span>Hezbollah joint missile + drone barrage at Israel. 179 Israelis injured in 24h. IDF minister Katz threatens Lebanon ground ops.</div></div>
+        <div class="tl-item"><div class="tl-date">12 MAR</div><div class="tl-text"><span class="tl-dot blue"></span><span class="tag us">US</span>KC-135 refueling tanker crashes in Iraq — all 6 crew KIA. No hostile fire found. 3 F-15s also lost (est. friendly fire).</div></div>
+        <div class="tl-item"><div class="tl-date">12 MAR</div><div class="tl-text"><span class="tl-dot amber"></span><span class="tag econ">ECON</span>Dow Jones falls below 47,000. Qatar Airways resumes 29 flights post-Iranian drone disruption at LNG facilities.</div></div>
+        <div class="tl-item"><div class="tl-date">11 MAR</div><div class="tl-text"><span class="tl-dot blue"></span><span class="tag econ">IEA</span>Record 400M barrel emergency release — largest in history. Brent crude stays $94–$102 as Hormuz disruption persists.</div></div>
+        <div class="tl-item"><div class="tl-date">11 MAR</div><div class="tl-text"><span class="tl-dot"></span><span class="tag iran">IRAN</span>IRGC navy stops + fires on 2 vessels in Hormuz Strait. Oman rescues 20 sailors from Iranian-seized Thai tanker.</div></div>
+        <div class="tl-item"><div class="tl-date">10 MAR</div><div class="tl-text"><span class="tl-dot amber"></span><span class="tag econ">ECON</span>DOW -400+ pts. US gas $3.63/gal (22-month high). Iran Health Ministry: 1,348+ civilian dead confirmed.</div></div>
+        <div class="tl-item"><div class="tl-date">09 MAR</div><div class="tl-text"><span class="tl-dot"></span><span class="tag iran">IRAN</span>Mojtaba Khamenei (56) formally appointed Supreme Leader by Assembly of Experts in virtual emergency session — dynastic succession unprecedented in Islamic Republic history.</div></div>
+        <div class="tl-item"><div class="tl-date">05 MAR</div><div class="tl-text"><span class="tl-dot"></span><span class="tag isr">ISR</span>Azadi Sport Complex (Tehran) bombed. UNESCO condemns strike damage to Golestan Palace World Heritage Site (UNESCO, 2 Mar).</div></div>
+        <div class="tl-item"><div class="tl-date">04 MAR</div><div class="tl-text"><span class="tl-dot"></span><span class="tag iran">IRAN</span>Mojtaba Khamenei named successor. Minab school strike: Shajareh Tayyebeh primary school hit — 100+ children, 50–100 adults killed.</div></div>
+        <div class="tl-item"><div class="tl-date">02 MAR</div><div class="tl-text"><span class="tl-dot amber"></span><span class="tag us">US</span>US Embassy Kuwait struck — closed indefinitely. US tanker Stena Imperative hit in Gulf. UK Akrotiri base (Cyprus) struck by Iran drone.</div></div>
+        <div class="tl-item"><div class="tl-date">01 MAR</div><div class="tl-text"><span class="tl-dot"></span><span class="tag iran">IRAN</span>Beit Shemesh ballistic strike: 9 dead including Biton family siblings (3 teens). Bunker designed for short-range rockets — failed against medium-range warhead.</div></div>
+        <div class="tl-item"><div class="tl-date">01 MAR</div><div class="tl-text"><span class="tl-dot amber"></span><span class="tag us">US</span>Trump: "Accepted Iranian proposal for negotiations." Larijani publicly rejects talks hours later. Pezeshkian issues 3 ceasefire conditions.</div></div>
+        <div class="tl-item"><div class="tl-date">28 FEB</div><div class="tl-text"><span class="tl-dot"></span><span class="tag isr">ISR</span><span class="tag us">US</span><strong>Op. Epic Fury initiated — 01:15 ET.</strong> Ali Khamenei killed in precision strike on Tehran compound. Iran launches retaliatory wave: drones + ballistic missiles toward Israel and Gulf states.</div></div>
       </div>
 
-      <!-- LATEST INTEL -->
       <div class="center-panel" style="border-right:none;">
-        <div class="panel-title red">◈ LATEST INTELLIGENCE</div>
+        <div class="panel-title red">◈ LATEST INTELLIGENCE REPORTS</div>
 
         <div class="news-card">
-          <div class="news-source">AL JAZEERA<span class="age">~20h ago</span></div>
-          <div class="news-head">Mojtaba Khamenei: "Attacks on Israel + US bases continue until US closes regional bases"</div>
-          <div class="news-body">First statement from Iran's new Supreme Leader, delivered via state TV. Hegseth calls it "evidence he is scared and injured." Leader did not appear in person.</div>
+          <div class="news-source">STATE TV / AL JAZEERA<span class="age">Mar 14</span></div>
+          <div class="news-head">Mojtaba Khamenei: "Attacks on Israel and US bases continue until all US regional bases closed"</div>
+          <div class="news-body">Delivered only via state TV newsreader — no original audio or video. Hegseth: "proof he is scared and disfigured." Legitimacy challenged: no clerical credentials, dynastic succession breaches Islamic Republic founding principles.</div>
         </div>
 
         <div class="news-card">
-          <div class="news-source">CNN<span class="age">~17h ago</span></div>
-          <div class="news-head">Netanyahu: "Operation will create conditions for Iranian regime change" — declines time limit</div>
-          <div class="news-body">Israeli defense minister Katz: "Operation continues without time limit until all objectives achieved." Trump: will know war is over when he feels it "in his bones."</div>
+          <div class="news-source">CNN / REUTERS<span class="age">Mar 14</span></div>
+          <div class="news-head">Netanyahu: "Operation creates conditions for Iranian regime change" — open-ended duration declared</div>
+          <div class="news-body">Defense Minister Katz: "continues until all objectives achieved." Netanyahu urges Iranians to "take to the streets." Trump: "War ends when I feel it in my bones" — no defined end-state creates strategic uncertainty.</div>
         </div>
 
         <div class="news-card">
-          <div class="news-source">CENTCOM<span class="age">2d ago</span></div>
-          <div class="news-head">US Army deploys 10,000 Merops interceptor drones to Middle East Theater</div>
-          <div class="news-body">Each drone costs $14,000–$15,000. Intended as cost-efficient counter to Iranian drone waves, replacing expensive missile interceptors for high-volume threats.</div>
+          <div class="news-source">US ARMY / CENTCOM<span class="age">Mar 14</span></div>
+          <div class="news-head">Task Force Scorpion Strike: 10,000 Merops drones deployed — largest low-cost drone combat deployment in US history</div>
+          <div class="news-body">Each Merops costs $14K–$15K vs $3M Patriot. Designed to intercept Iranian Shahed ($20K–$30K) kamikaze drone swarms cost-effectively. Reserves high-value interceptors for ballistic missile threats. Strategic economic advantage achieved.</div>
         </div>
 
         <div class="news-card">
-          <div class="news-source">AP / ACLED<span class="age">2d ago</span></div>
-          <div class="news-head">Iran launches school missile strike — 100+ schoolchildren killed in erroneous US strike</div>
-          <div class="news-body">A school building was erroneously selected as a US missile target, killing over 100 children and 50–100 others. Cultural sites including UNESCO Golestan Palace damaged.</div>
+          <div class="news-source">ACLED / UNESCO / AP<span class="age">Mar 4–5</span></div>
+          <div class="news-head">Minab school strike: 100+ children killed — Golestan Palace and Jameh Mosque Isfahan damaged</div>
+          <div class="news-body">Shajareh Tayyebeh primary school erroneously targeted. Iran claims 100+ children and 50–100 adults killed in single strike. UNESCO condemns Golestan Palace World Heritage Site damage. Jameh Mosque Isfahan also reported hit.</div>
         </div>
 
         <div class="news-card">
-          <div class="news-source">HAARETZ / IDF<span class="age">1d ago</span></div>
-          <div class="news-head">Israel strikes Basij force checkpoints in Tehran — targets IRGC crowd control units</div>
-          <div class="news-body">IDF says strikes aim to undermine regime authority. Netanyahu urges Iranian citizens to "take to the streets." Explosions near Al Quds Day rally in central Tehran.</div>
+          <div class="news-source">IRAN PRESIDENT'S OFFICE<span class="age">Mar 2026</span></div>
+          <div class="news-head">Iran's 3 ceasefire conditions: rights recognition, war reparations, non-aggression guarantees</div>
+          <div class="news-body">Pezeshkian outlines formal conditions publicly. Larijani rejects US negotiation offer. Iran claims ~10,000 civilian sites damaged — disputed by US/Israel but partially corroborated by satellite imagery. Underground missile cities partially survive wave-1 strikes.</div>
         </div>
 
         <div class="news-card">
-          <div class="news-source">SENATE / CNN<span class="age">17h ago</span></div>
-          <div class="news-head">First Senate oversight hearing planned — no open hearings held despite 14 days of war</div>
-          <div class="news-body">GOP-led Congress has held only classified sessions. 250+ US organizations signed letter calling to halt war funding. $11.3B spent in first 6 days.</div>
+          <div class="news-source">WSJ / WFP / IEA<span class="age">Mar 2026</span></div>
+          <div class="news-head">WFP warning: 50% of global urea and sulfur exports transit Hormuz — food crisis risk escalating</div>
+          <div class="news-body">Beyond crude oil, Hormuz closure threatens global agricultural inputs. Extended closure could trigger fertilizer shortages in Asia and Africa. IEA 400M barrel release stabilizes crude but cannot offset non-oil commodity disruption. Stagflation risk rising.</div>
         </div>
 
         <div class="news-card">
-          <div class="news-source">IRAN PRES. OFFICE<span class="age">2d ago</span></div>
-          <div class="news-head">Iran's 3 conditions to end war: rights recognition, war reparations, no-aggression guarantees</div>
-          <div class="news-body">President Pezeshkian outlines Iran's ceasefire conditions. Iran says it has struck "nearly 10,000 civilian sites" as US/Israeli claims. Civilian deaths disputed.</div>
+          <div class="news-source">US SENATE / CNN<span class="age">Mar 13</span></div>
+          <div class="news-head">No open Congressional hearings after 14 days of war — first oversight session finally scheduled</div>
+          <div class="news-body">GOP Congress held only classified sessions. 250+ US organizations sign letter calling to halt war funding. $11.3B spent in 6 days; ~$50B additional requested. Stagflation risk from high energy costs driving bipartisan fiscal pushback.</div>
+        </div>
+
+        <div class="news-card">
+          <div class="news-source">IRGC / HAARETZ<span class="age">Mar 13</span></div>
+          <div class="news-head">Iran "underground missile cities" partially functional — Shahab-3, Sejjil, Kheibar Shekan stockpiles remain</div>
+          <div class="news-body">190+ launchers destroyed but hardened underground sites retain existing warheads. Production capacity "functionally defeated" per Hegseth — new components cannot be manufactured. Iran relies on remaining stockpile + Hezbollah proxy for continued pressure.</div>
         </div>
       </div>
     </div>
 
-  </div><!-- /main area -->
+  </div>
 
-  <!-- ═══ RIGHT SIDEBAR ═══ -->
+  <!-- RIGHT SIDEBAR -->
   <div class="sidebar sidebar-right">
 
-    <!-- THREAT MATRIX -->
     <div class="panel">
       <div class="panel-title red">◉ THREAT MATRIX</div>
-
-      <div class="threat-row">
-        <div class="threat-dot" style="background:var(--red)"></div>
-        <div class="threat-name">Iran — IRGC + Regime</div>
-        <div class="threat-lvl critical">CRITICAL</div>
-      </div>
-      <div class="threat-row">
-        <div class="threat-dot" style="background:var(--red)"></div>
-        <div class="threat-name">Strait of Hormuz</div>
-        <div class="threat-lvl critical">CRITICAL</div>
-      </div>
-      <div class="threat-row">
-        <div class="threat-dot" style="background:var(--amber)"></div>
-        <div class="threat-name">Hezbollah (Lebanon)</div>
-        <div class="threat-lvl high">HIGH</div>
-      </div>
-      <div class="threat-row">
-        <div class="threat-dot" style="background:var(--amber)"></div>
-        <div class="threat-name">Gulf States Security</div>
-        <div class="threat-lvl high">HIGH</div>
-      </div>
-      <div class="threat-row">
-        <div class="threat-dot" style="background:#aaaa20"></div>
-        <div class="threat-name">Global Oil Supply</div>
-        <div class="threat-lvl elevated">ELEVATED</div>
-      </div>
-      <div class="threat-row">
-        <div class="threat-dot" style="background:#aaaa20"></div>
-        <div class="threat-name">Houthi (Red Sea)</div>
-        <div class="threat-lvl elevated">ELEVATED</div>
-      </div>
-      <div class="threat-row">
-        <div class="threat-dot" style="background:var(--green)"></div>
-        <div class="threat-name">Iran Cyber Ops</div>
-        <div class="threat-lvl moderate">MODERATE</div>
-      </div>
+      <div class="threat-row"><div class="threat-dot" style="background:var(--red)"></div><div class="threat-name">Strait of Hormuz</div><div class="threat-lvl critical">CRITICAL</div></div>
+      <div class="threat-row"><div class="threat-dot" style="background:var(--red)"></div><div class="threat-name">Iran IRGC + Regime</div><div class="threat-lvl critical">CRITICAL</div></div>
+      <div class="threat-row"><div class="threat-dot" style="background:var(--red)"></div><div class="threat-name">Iran Ballistic Missiles</div><div class="threat-lvl critical">CRITICAL</div></div>
+      <div class="threat-row"><div class="threat-dot" style="background:var(--amber)"></div><div class="threat-name">Hezbollah (Lebanon)</div><div class="threat-lvl high">HIGH</div></div>
+      <div class="threat-row"><div class="threat-dot" style="background:var(--amber)"></div><div class="threat-name">Gulf States Security</div><div class="threat-lvl high">HIGH</div></div>
+      <div class="threat-row"><div class="threat-dot" style="background:var(--amber)"></div><div class="threat-name">Global Energy Supply</div><div class="threat-lvl high">HIGH</div></div>
+      <div class="threat-row"><div class="threat-dot" style="background:var(--amber)"></div><div class="threat-name">Global Food Security</div><div class="threat-lvl high">HIGH</div></div>
+      <div class="threat-row"><div class="threat-dot" style="background:#aaaa20"></div><div class="threat-name">Houthi / Red Sea</div><div class="threat-lvl elevated">ELEVATED</div></div>
+      <div class="threat-row"><div class="threat-dot" style="background:#aaaa20"></div><div class="threat-name">Regime Stability (Iran)</div><div class="threat-lvl elevated">ELEVATED</div></div>
+      <div class="threat-row"><div class="threat-dot" style="background:var(--green)"></div><div class="threat-name">Iran Cyber Ops</div><div class="threat-lvl moderate">MODERATE</div></div>
     </div>
 
-    <!-- ECONOMIC IMPACT -->
     <div class="panel">
       <div class="panel-title amber">💹 ECONOMIC IMPACT</div>
-      <div class="econ-row">
-        <div class="econ-name">Brent Crude Oil</div>
-        <div class="econ-val">$94–102</div>
-        <div class="econ-chg up">▲ +28%</div>
-      </div>
-      <div class="econ-row">
-        <div class="econ-name">US Gas Avg (gal)</div>
-        <div class="econ-val">$3.63</div>
-        <div class="econ-chg up">▲ 22mo high</div>
-      </div>
-      <div class="econ-row">
-        <div class="econ-name">Dow Jones</div>
-        <div class="econ-val">~41,200</div>
-        <div class="econ-chg up">▼ -400 pts</div>
-      </div>
-      <div class="econ-row">
-        <div class="econ-name">LNG (Qatar)</div>
-        <div class="econ-val">DISRUPTED</div>
-        <div class="econ-chg up">▲ +18%</div>
-      </div>
-      <div class="econ-row">
-        <div class="econ-name">Hormuz Tankers</div>
-        <div class="econ-val">HALTED</div>
-        <div class="econ-chg up">16+ STRUCK</div>
-      </div>
-      <div class="econ-row">
-        <div class="econ-name">Global Urea (fertilizer)</div>
-        <div class="econ-val">AT RISK</div>
-        <div class="econ-chg up">50% transits</div>
-      </div>
-      <div class="econ-row">
-        <div class="econ-name">IEA Oil Reserve</div>
-        <div class="econ-val">400M bbl</div>
-        <div class="econ-chg dn">RELEASED</div>
-      </div>
+      <div class="econ-row"><div class="econ-name">Brent Crude Oil</div><div class="econ-val">$94–$102</div><div class="econ-chg up">▲ +28%</div></div>
+      <div class="econ-row"><div class="econ-name">US Gas Avg (gal)</div><div class="econ-val">$3.63</div><div class="econ-chg up">▲ 22mo high</div></div>
+      <div class="econ-row"><div class="econ-name">Dow Jones</div><div class="econ-val">&lt;47,000</div><div class="econ-chg up">▼ -1.5%/sess</div></div>
+      <div class="econ-row"><div class="econ-name">S&P 500</div><div class="econ-val">6,632</div><div class="econ-chg up">▼ weekly loss</div></div>
+      <div class="econ-row"><div class="econ-name">IEA Reserve Release</div><div class="econ-val">400M bbl</div><div class="econ-chg dn">RECORD RELEASE</div></div>
+      <div class="econ-row"><div class="econ-name">LNG (Qatar)</div><div class="econ-val">DISRUPTED</div><div class="econ-chg up">▲ +18%</div></div>
+      <div class="econ-row"><div class="econ-name">Hormuz tanker traffic</div><div class="econ-val">HALTED</div><div class="econ-chg up">16+ struck</div></div>
+      <div class="econ-row"><div class="econ-name">Global urea / sulfur</div><div class="econ-val">AT RISK</div><div class="econ-chg up">50% via Hormuz</div></div>
+      <div class="econ-row"><div class="econ-name">US additional war req.</div><div class="econ-val">~$50B</div><div class="econ-chg up">CONTESTED</div></div>
     </div>
 
-    <!-- KEY ACTORS -->
     <div class="panel">
       <div class="panel-title cyan">◈ KEY ACTORS</div>
-
       <div class="actor-card">
         <div class="actor-flag">🇺🇸</div>
-        <div>
-          <div class="actor-role">US PRESIDENT</div>
-          <div class="actor-name">Donald Trump</div>
-          <div class="actor-note">Authorized Op. Epic Fury. Targets include nuclear + regime change. 4-week timetable hint.</div>
-        </div>
+        <div><div class="actor-role">US PRESIDENT</div><div class="actor-name">Donald Trump</div><div class="actor-note">Authorized Op. Epic Fury. No declared end-state. "Will know war is over in my bones." Reversed Kurdish proxy support within 24h.</div></div>
       </div>
       <div class="actor-card">
         <div class="actor-flag">🇮🇱</div>
-        <div>
-          <div class="actor-role">PM ISRAEL</div>
-          <div class="actor-name">Benjamin Netanyahu</div>
-          <div class="actor-note">"Conditions for regime change in Iran." Joint ops with US. No time limit declared.</div>
-        </div>
+        <div><div class="actor-role">PM ISRAEL</div><div class="actor-name">Benjamin Netanyahu</div><div class="actor-note">"Creating conditions for Iranian regime change." No time limit. Urges Iranians to revolt. IDF eyeing Lebanon ground ops.</div></div>
       </div>
       <div class="actor-card">
         <div class="actor-flag">🇮🇷</div>
-        <div>
-          <div class="actor-role">IRAN SUPREME LEADER (NEW)</div>
-          <div class="actor-name">Mojtaba Khamenei</div>
-          <div class="actor-note">Son of assassinated Ali Khamenei. Reportedly wounded. $10M US State Dept bounty.</div>
-        </div>
+        <div><div class="actor-role">IRAN SUPREME LEADER</div><div class="actor-name">Mojtaba Khamenei</div><div class="actor-note">56 yrs. Appointed Mar 9. Son of assassinated Ali Khamenei. Reportedly wounded / disfigured. $10M US bounty. No public appearance.</div></div>
       </div>
       <div class="actor-card">
         <div class="actor-flag">🇮🇷</div>
-        <div>
-          <div class="actor-role">IRAN PRESIDENT</div>
-          <div class="actor-name">Masoud Pezeshkian</div>
-          <div class="actor-note">Issued 3 ceasefire conditions. Negotiations status: failed. Diplomacy collapse on Feb 28.</div>
-        </div>
+        <div><div class="actor-role">IRAN PRESIDENT</div><div class="actor-name">Masoud Pezeshkian</div><div class="actor-note">Issued 3 ceasefire conditions. Diplomacy collapsed Feb 28 when IRGC overrode diplomatic track.</div></div>
       </div>
       <div class="actor-card">
         <div class="actor-flag">🇺🇸</div>
-        <div>
-          <div class="actor-role">US SEC. DEFENSE</div>
-          <div class="actor-name">Pete Hegseth</div>
-          <div class="actor-note">Confirmed Khamenei "wounded and disfigured." States Iran military significantly degraded.</div>
-        </div>
+        <div><div class="actor-role">US SEC. DEFENSE</div><div class="actor-name">Pete Hegseth</div><div class="actor-note">Claims Mojtaba "wounded and disfigured." States Iran missile production "functionally defeated." Defends no open hearings.</div></div>
+      </div>
+      <div class="actor-card">
+        <div class="actor-flag">🇮🇷</div>
+        <div><div class="actor-role">IRAN NEGOTIATOR</div><div class="actor-name">Ali Larijani</div><div class="actor-note">Rejected US negotiation Mar 1. $10M US bounty issued Mar 14. Key target in State Dept designation list.</div></div>
       </div>
     </div>
 
-    <!-- INTEL FEED (OSINT/CYBER) -->
     <div class="panel">
-      <div class="panel-title green">⚙ OSINT / CYBER FEED</div>
-      <div class="intel-item"><span class="alert-prefix">[ALERT]</span> Iran internet access severely restricted — civilian media blackout ongoing</div>
-      <div class="intel-item"><span class="prefix">[INFO]</span> Evin Prison: reduced food + water for detainees reported (WSJ)</div>
-      <div class="intel-item"><span class="alert-prefix">[ALERT]</span> 4 Bahraini nationals arrested: spying for Iran IRGC</div>
-      <div class="intel-item"><span class="prefix">[INFO]</span> Iran civilian flights halted — all regional airspace closures in effect</div>
-      <div class="intel-item"><span class="prefix">[INFO]</span> Senior IRGC official: "Will set fire to any ship in Hormuz"</div>
-      <div class="intel-item"><span class="alert-prefix">[ALERT]</span> ACLED: Iran missile production capacity degraded — depots + launchers targeted</div>
-      <div class="intel-item"><span class="prefix">[INFO]</span> Trump: supports Kurdish militias in Iran — later reversed decision</div>
-      <div class="intel-item"><span class="prefix">[INFO]</span> WFP warns: 50% of global urea/sulfur exports transit Hormuz — food crisis risk</div>
-      <div class="intel-item"><span class="alert-prefix">[ALERT]</span> UK Akrotiri base (Cyprus) struck by Iranian drone</div>
+      <div class="panel-title green">⚙ WEAPONS SYSTEMS — COST ANALYSIS</div>
+      <div class="wpn-row"><div class="wpn-name">🇺🇸 Merops Interceptor Drone</div><div class="wpn-cost">$14K–$15K</div><div class="wpn-eff high">DEPLOYED</div></div>
+      <div class="wpn-row"><div class="wpn-name">🇮🇷 Shahed Kamikaze Drone</div><div class="wpn-cost">$20K–$30K</div><div class="wpn-eff med">ACTIVE</div></div>
+      <div class="wpn-row"><div class="wpn-name">🇺🇸 Patriot PAC-3 Missile</div><div class="wpn-cost">$3M–$4M</div><div class="wpn-eff high">ACTIVE</div></div>
+      <div class="wpn-row"><div class="wpn-name">🇮🇷 Shahab-3 / Sejjil</div><div class="wpn-cost">Classified</div><div class="wpn-eff med">STOCKPILE</div></div>
+      <div class="wpn-row"><div class="wpn-name">🇮🇷 Kheibar Shekan</div><div class="wpn-cost">Classified</div><div class="wpn-eff med">STOCKPILE</div></div>
+      <div class="wpn-row"><div class="wpn-name">🇺🇸 B-2 Spirit Stealth Bomber</div><div class="wpn-cost">$2B+</div><div class="wpn-eff dep">CONFIRMED</div></div>
+      <div class="wpn-row"><div class="wpn-name">🇺🇸 USS Gerald R. Ford CVN-78</div><div class="wpn-cost">$13B</div><div class="wpn-eff dep">ON STATION</div></div>
     </div>
 
-  </div><!-- /sidebar right -->
+    <div class="panel">
+      <div class="panel-title green">⚙ OSINT / INTELLIGENCE NOTES</div>
+      <div class="intel-item"><span class="alert-prefix">[ALERT]</span> Iran internet severely restricted — civilian media blackout since Feb 28</div>
+      <div class="intel-item"><span class="alert-prefix">[ALERT]</span> IRGC: will crush domestic unrest "with greater force than Jan 2026 crackdown"</div>
+      <div class="intel-item"><span class="prefix">[INFO]</span> Evin Prison: reduced food + water for political detainees (WSJ report)</div>
+      <div class="intel-item"><span class="alert-prefix">[ALERT]</span> 4 Bahraini nationals arrested — spying for Iran IRGC (Bahrain MOI)</div>
+      <div class="intel-item"><span class="prefix">[INFO]</span> UK, France, Italy forces deploy to Cyprus to defend Akrotiri base</div>
+      <div class="intel-item"><span class="alert-prefix">[ALERT]</span> Iran underground missile cities partially survive wave-1 — hardened sites intact</div>
+      <div class="intel-item"><span class="prefix">[INFO]</span> Trump reversed Kurdish militia proxy decision within 24h of announcement</div>
+      <div class="intel-item"><span class="alert-prefix">[ALERT]</span> IRGC senior official: "Will set fire to any vessel in Hormuz"</div>
+      <div class="intel-item"><span class="prefix">[INFO]</span> UN SG Guterres (Beirut): "No military solution to Hezbollah conflict"</div>
+      <div class="intel-item"><span class="prefix">[INFO]</span> 250+ US orgs sign letter to halt war funding — $11.3B in 6 days criticized</div>
+    </div>
 
-</div><!-- /grid-outer -->
+  </div>
+
+</div>
 
 <!-- FOOTER -->
 <div id="footer">
-  <div>
-    <span class="live-dot"></span>
-    <span class="footer-note">WAR-DASHBOARD.GITHUB.IO &nbsp;|&nbsp; DATA: AL JAZEERA · CNN · ACLED · AP · UK PARLIAMENT · WIKIPEDIA</span>
-  </div>
+  <div><span class="live-dot"></span><span class="footer-note">WAR-DASHBOARD.GITHUB.IO &nbsp;|&nbsp; OSINT: AL JAZEERA · CNN · CENTCOM · ACLED · AP · UNESCO · IEA · WSJ · UK PARLIAMENT</span></div>
   <div class="source-links">
     <a href="https://www.aljazeera.com" target="_blank">ALJAZEERA</a>
     <a href="https://www.cnn.com" target="_blank">CNN</a>
     <a href="https://acleddata.com" target="_blank">ACLED</a>
-    <a href="https://commonslibrary.parliament.uk" target="_blank">UK PARLIAMENT</a>
-    <a href="https://en.wikipedia.org/wiki/2026_Iran_war" target="_blank">WIKIPEDIA</a>
-    <a href="https://www.britannica.com/event/2026-Iran-Conflict" target="_blank">BRITANNICA</a>
+    <a href="https://commonslibrary.parliament.uk" target="_blank">UK PARL.</a>
+    <a href="https://www.wsj.com" target="_blank">WSJ</a>
+    <a href="https://www.iea.org" target="_blank">IEA</a>
+    <a href="https://www.un.org" target="_blank">UN</a>
   </div>
   <div class="footer-note" id="last-updated">LAST UPDATED: --</div>
 </div>
 
 <script>
-  // CLOCK
-  function updateClock() {
-    const now = new Date();
-    const pad = n => String(n).padStart(2,'0');
-    document.getElementById('clock').textContent =
-      `${now.getUTCFullYear()}-${pad(now.getUTCMonth()+1)}-${pad(now.getUTCDate())} ${pad(now.getUTCHours())}:${pad(now.getUTCMinutes())}:${pad(now.getUTCSeconds())} UTC`;
-    document.getElementById('last-updated').textContent =
-      `LAST UPDATED: ${now.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})} ${pad(now.getUTCHours())}:${pad(now.getUTCMinutes())} UTC`;
+  function updateClock(){
+    const n=new Date(),p=v=>String(v).padStart(2,'0');
+    document.getElementById('clock').textContent=`${n.getUTCFullYear()}-${p(n.getUTCMonth()+1)}-${p(n.getUTCDate())} ${p(n.getUTCHours())}:${p(n.getUTCMinutes())}:${p(n.getUTCSeconds())} UTC`;
+    document.getElementById('last-updated').textContent=`LAST UPDATED: ${n.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})} ${p(n.getUTCHours())}:${p(n.getUTCMinutes())} UTC`;
   }
-  updateClock();
-  setInterval(updateClock, 1000);
+  updateClock();setInterval(updateClock,1000);
 
-  // DAY COUNTER
-  const start = new Date('2026-02-28T00:00:00Z');
-  const today = new Date();
-  const dayNum = Math.ceil((today - start) / (1000 * 60 * 60 * 24));
-  document.getElementById('day-count').textContent = dayNum > 0 ? dayNum : 14;
+  const start=new Date('2026-02-28T06:15:00Z');
+  const dayNum=Math.max(1,Math.ceil((new Date()-start)/(1000*60*60*24)));
+  document.getElementById('day-count').textContent=dayNum;
 
-  // ANIMATED COUNTER
-  function animateCount(id, end, suffix='') {
-    const el = document.getElementById(id);
-    if (!el) return;
-    const numEnd = parseInt(end.replace(/[^0-9]/g,''));
-    let start = 0;
-    const step = Math.ceil(numEnd / 50);
-    const timer = setInterval(() => {
-      start = Math.min(start + step, numEnd);
-      el.textContent = start.toLocaleString() + suffix;
-      if (start >= numEnd) {
-        el.textContent = end;
-        clearInterval(timer);
-      }
-    }, 30);
+  function animCount(id,target){
+    const el=document.getElementById(id);if(!el)return;
+    const num=parseInt(target.replace(/[^0-9]/g,''));
+    let cur=0;const step=Math.max(1,Math.ceil(num/60));
+    const t=setInterval(()=>{cur=Math.min(cur+step,num);el.textContent=cur.toLocaleString()+'+';if(cur>=num){el.textContent=target;clearInterval(t);}},25);
   }
-
-  // Trigger after page load
-  window.addEventListener('load', () => {
-    setTimeout(() => {
-      animateCount('iran-dead', '1,444+');
-      animateCount('iran-inj', '18,551+');
-      animateCount('israel-dead', '15+');
-      animateCount('total-dead', '2,100+');
-    }, 600);
-  });
+  window.addEventListener('load',()=>{setTimeout(()=>{animCount('total-dead','2,275+');},500);});
 </script>
 </body>
 </html>
